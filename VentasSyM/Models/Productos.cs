@@ -9,6 +9,9 @@ public class Productos
   
     [Required]
     public string Nombre {  get; set; }
+
+    [Required]
+    public string Descripcion { get; set; }
     
     [Required]
     public DateTime FechaVencimiento { get; set; }
