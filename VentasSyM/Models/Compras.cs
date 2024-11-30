@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VentasSyM.Models;
 
@@ -19,6 +20,9 @@ public class Compras
     [Required]
     public decimal Total {  get; set; }
 
+    [Required]
+    public string Vendedor { get; set; }
 
-
+    [ForeignKey("CompraId")]
+    public List <ComprasDetalle> comprasDetalles { get; set; } = new List<ComprasDetalle>();
 }
