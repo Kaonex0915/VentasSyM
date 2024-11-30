@@ -9,8 +9,6 @@ public class Productos
   
     [Required]
     public string Nombre {  get; set; }
-    [Required]
-    public DateTime FechaLlegada {  get; set; }
     
     [Required]
     public DateTime FechaVencimiento { get; set; }
@@ -26,6 +24,5 @@ public class Productos
     public int Existencia { get; set; }
     [Required]
     public int Cantidad { get; set; }
-
 
 }
