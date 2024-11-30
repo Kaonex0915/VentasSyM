@@ -25,5 +25,5 @@ public class Ventas
     public decimal Total { get; set; }
 
     [ForeignKey("VentaId")]
-    public List<VentasDetalle> ventasDetalles { get; set; } = new List<VentasDetalle>();
+    public List<VentasDetalle> VentasDetalles { get; set; } = new List<VentasDetalle>();
 }

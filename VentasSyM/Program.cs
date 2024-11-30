@@ -1,3 +1,4 @@
+using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using VentasSyM.Components;
 using VentasSyM.Components.Account;
 using VentasSyM.DAL;
 using VentasSyM.Data;
+using VentasSyM.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,14 +20,16 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContextFactory<Context>(options => options.UseSqlServer(ConStr));
-
+builder.Services.AddBlazoredToast();
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
-
+builder.Services.AddScoped<CompraServices>();
+builder.Services.AddScoped<ProductoServices>();
+builder.Services.AddScoped<VentaServices>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
