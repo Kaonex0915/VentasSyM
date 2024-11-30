@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VentasSyM.Components;
 using VentasSyM.Components.Account;
+using VentasSyM.DAL;
 using VentasSyM.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+builder.Services.AddDbContextFactory<Context>(options => options.UseSqlServer(ConStr));
 
 builder.Services.AddAuthentication(options =>
     {
