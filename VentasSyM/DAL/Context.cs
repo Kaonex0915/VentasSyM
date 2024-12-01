@@ -25,7 +25,8 @@ public class Context:DbContext
                 Costo = 3000,
                 Precio = 3500,
                 Existencia = 3,
-                Categoria = "Hogar y electrodomesticos"
+                Categoria = "Hogar y electrodomesticos",
+                TieneFechaVencimiento = false
             },
 
             new Productos
@@ -36,7 +37,8 @@ public class Context:DbContext
                 Costo = 850,
                 Precio = 1000,
                 Existencia = 4,
-                Categoria = "Consolas y videojuegos"
+                Categoria = "Consolas y videojuegos",
+                TieneFechaVencimiento = false
             },
 
             new Productos
@@ -47,7 +49,8 @@ public class Context:DbContext
                 Costo = 2900,
                 Precio = 3100,
                 Existencia = 13,
-                Categoria = "Hogar y electrodomesticos"
+                Categoria = "Hogar y electrodomesticos",
+                TieneFechaVencimiento = false
             },
 
             new Productos
@@ -58,7 +61,8 @@ public class Context:DbContext
                Costo = 7020,
                Precio = 8000,
                Existencia = 10,
-               Categoria = "Deportes y fitness"
+               Categoria = "Deportes y fitness",
+               TieneFechaVencimiento = false
 
             }
         );

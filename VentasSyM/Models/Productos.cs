@@ -27,5 +27,6 @@ public class Productos
     public int Existencia { get; set; }
     [Required]
     public int Cantidad { get; set; }
+    public bool TieneFechaVencimiento { get; set; }
 
 }
