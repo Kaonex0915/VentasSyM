@@ -1,0 +1,64 @@
+﻿@page "/Details/Ventas"
+@page "/Details/Ventas/{VentaId:int}"
+@inject VentaServices ventaService
+
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+
+<PageTitle>Detalles de la compra</PageTitle>
+
+@if (ventas != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header  bg-primary text-white text-center py-2 rounded">
+                <h3 class="text-center"><strong>Detalles de la venta</strong></h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>VentaId:</strong> @ventas.VentaId</li>
+                                <li><strong>Comprador:</strong> @ventas.Comprador</li>
+                                <li><strong>Vendedor:</strong> @ventas.Vendedor</li>
+                                @foreach (var detalle in Lista_VentaDetalles)
+                                {
+                                    <li><strong>Producto: </strong>@detalle.Producto.Nombre</li>
+                                }
+                                <li><strong>Monto total:</strong> @ventas.Total</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se halló el trabajo.</p>
+}
+
+@code {
+    [Parameter]
+    public int VentaId { get; set; }
+    public Ventas? ventas { get; set; } = new Ventas();
+    public List<VentasDetalle> Lista_VentaDetalles { get; set; } = new List<VentasDetalle>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ventas = await ventaService.Buscar(VentaId);
+
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Index");
+    }
+}

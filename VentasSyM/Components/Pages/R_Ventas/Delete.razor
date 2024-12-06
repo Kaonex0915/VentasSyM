@@ -1,0 +1,98 @@
+﻿@page "/Delete/Ventas"
+@page "/Delete/Ventas/{CompraId:int}"
+@inject VentaServices ventaService
+@inject NavigationManager navigationManager
+
+@rendermode InteractiveServer
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+<PageTitle>Cancelar Venta</PageTitle>
+
+@if (compras != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+
+            <div class="card-header  bg-primary text-white text-center py-2 rounded">
+                <h3><strong>Cancelar venta</strong></h3>
+            </div>
+            <div class="card-header">
+                <h3 class="text-danger">¿Seguro de que quieres cancelar esta venta?</h3>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card shadow-lg">
+                            <div class="card-header">
+                                <h3 class="text-center"><strong>Datos de la venta</strong></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="border-primary border-2 borde">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <ul class="list-unstyled">
+                                                    <li><strong>VentaId:</strong> @ventas.VentaId</li>
+                                                    <li><strong>Comprador:</strong> @ventas.Comprador</li>
+                                                    <li><strong>Vendedor:</strong> @ventas.Vendedor</li>
+                                                    <li><strong>Total:</strong> @ventas.Total</li>
+                                                    @foreach (var detalle in Lista_VentaDetalles)
+                                                    {
+                                                        <li><strong>Producto: </strong>@detalle.Productos.Nombre</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash-fill"></i> Eliminar</button>
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se halló la compra.</p>
+}
+
+@code {
+    [Parameter]
+    public int VentaId { get; set; }
+    public Ventas? ventas { get; set; } = new Ventas();
+    public List<VentasDetalle> Lista_VentaDetalles { get; set; } = new List<VentasDetalle>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (VentaId != 0)
+        {
+            ventas = await ventaService.Buscar(VentaId);
+
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (VentaId == 0 || ventas == null)
+        {
+            return;
+        }
+
+        if (await ventaService.Eliminar(VentaId))
+        {
+            Volver();
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Index");
+    }
+}

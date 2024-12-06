@@ -1,0 +1,66 @@
+﻿@page "/Create/Categorias"
+@page "/Create/Categorias/{CategoriaId:int}"
+@inject CategoriaServices categoriaService
+@rendermode InteractiveServer
+
+
+<EditForm Model="categorias" OnValidSubmit="Guardar" FormName="CategoriaForm">
+    <DataAnnotationsValidator />
+    <div class="card">
+
+        <div class="card-header">
+            <h1>Agregar Nueva Categoria</h1>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="CategoriaId" class="form-label">CategoriaId:</label>
+                    <div class="input-group">
+                        <div class=" sizeid">
+                            <InputNumber @bind-Value="categorias.CategoriaId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Nombre:</label>
+                    <InputText @bind-Value="categorias.Nombre" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => categorias.Nombre)" />
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+            <button type="submit" class="btn btn-outline-success">Guardar <i class="bi bi-floppy mt-3" /></button>
+            <a class="btn btn-outline-primary" href="/Index/Categorias/">
+                <span class="bi bi-arrow-left mt-3"></span> Retroceder
+            </a>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int? CategoriaId { get; set; }
+    public Categorias categorias { get; set; } = new Categorias();
+    private bool Existe = false;
+
+    public void Nuevo()
+    {
+        categorias = new Categorias();
+        Existe = false;
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await categoriaService.Guardar(this.categorias);
+        Nuevo();
+    }
+}

@@ -1,0 +1,117 @@
+﻿@page "/Edit/Productos"
+@page "/Edit/Productos/{ProductoId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+@inject ProductoServices productoService
+
+<EditForm Model="productos" OnValidSubmit="Guardar" FormName="ProductoForm">
+    <DataAnnotationsValidator />
+    <div class="card">
+
+        <div class="card-header">
+            <h1>Editar Producto</h1>
+        </div>
+
+        <div class="card-body">
+
+            <label>ID:</label>
+            <div class="input-group">
+                <InputNumber @bind-Value="productos.ProductoId" class="form-control"></InputNumber>
+                <button type="button" class="btn btn-outline-primary oi oi-magnifying-glass" @onclick="Buscar"></button>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Nombre:</label>
+                    <InputText @bind-Value="productos.Nombre" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => productos.Nombre)" />
+                </div>
+
+
+                <div class="col-md-3">
+                    <label>Fecha de vencimiento:</label>
+                    <InputDate @bind-Value="productos.FechaVencimiento" class="form-control"></InputDate>
+                    <ValidationMessage For="@(() => productos.FechaVencimiento)" />
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+                <label>Descripcion:</label>
+                <InputText @bind-Value="productos.Descripcion" class="form-control"></InputText>
+                <ValidationMessage For="@(() => productos.Descripcion)" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Costo:</label>
+                    <InputNumber @bind-Value="productos.Costo" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => productos.Costo)" />
+                </div>
+
+
+                <div class="col-md-3">
+                    <label>Precio:</label>
+                    <InputNumber @bind-Value="productos.Precio" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => productos.Precio)" />
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+                <label>Existencia:</label>
+                <InputNumber @bind-Value="productos.Existencia" class="form-control"></InputNumber>
+                <ValidationMessage For="@(() => productos.Existencia)" />
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+            <button type="submit" class="btn btn-outline-success">Guardar <i class="bi bi-floppy mt-3" /></button>
+            <a class="btn btn-outline-primary" href="/Index/Categorias/">
+                <span class="bi bi-arrow-left mt-3"></span> Retroceder
+            </a>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? ProductoId { get; set; }
+    public Productos productos { get; set; } = new Productos();
+    private bool Existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ProductoId.HasValue)
+        {
+            productos.ProductoId = ProductoId.Value;
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var productoEncontrado = await productoService.Buscar(productos.ProductoId);
+
+        if (productoEncontrado != null)
+        {
+            productos = productoEncontrado;
+        }
+    }
+
+
+    public void Nuevo()
+    {
+        productos = new Productos();
+        Existe = false;
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await productoService.Guardar(this.productos);
+        Nuevo();
+    }
+}

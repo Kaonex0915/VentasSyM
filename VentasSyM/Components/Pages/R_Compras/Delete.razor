@@ -1,0 +1,98 @@
+﻿@page "/Delete/Compras"
+@page "/Delete/Compras/{CompraId:int}"
+@inject CompraServices compraService
+@inject NavigationManager navigationManager
+
+@rendermode InteractiveServer
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+<PageTitle>Eliminar Compra</PageTitle>
+
+@if (compras != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+
+            <div class="card-header  bg-primary text-white text-center py-2 rounded">
+                <h3><strong>Eliminar compra</strong></h3>
+            </div>
+            <div class="card-header">
+                <h3 class="text-danger">¿Seguro de que quieres eliminar esta compra?</h3>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card shadow-lg">
+                            <div class="card-header">
+                                <h3 class="text-center"><strong>Datos de la compra</strong></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="border-primary border-2 borde">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <ul class="list-unstyled">
+                                                    <li><strong>CompraId:</strong> @compras.CompraId</li>
+                                                    <li><strong>Comprador:</strong> @compras.Comprador</li>
+                                                    <li><strong>Vendedor:</strong> @compras.Vendedor</li>
+                                                    <li><strong>Total:</strong> @compras.Total</li>
+                                                    @foreach (var detalle in Lista_CompraDetalles)
+                                                    {
+                                                        <li><strong>Producto: </strong>@detalle.Productos.Nombre</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash-fill"></i> Eliminar</button>
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se halló la compra.</p>
+}
+
+@code {
+    [Parameter]
+    public int CompraId { get; set; }
+    public Compras? compras { get; set; } = new Compras();
+    public List<ComprasDetalle> Lista_CompraDetalles { get; set; } = new List<ComprasDetalle>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CompraId != 0)
+        {
+            compras = await compraService.Buscar(CompraId);
+
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (CompraId == 0 || compras == null)
+        {
+            return;
+        }
+
+        if (await compraService.Eliminar(CompraId))
+        {
+            Volver();
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Index");
+    }
+}

@@ -1,0 +1,97 @@
+﻿@page "/Detail/Productos"
+@page "/Detail/Productos/{ProductoId:int}"
+@inject NavigationManager navigationManager
+@inject ProductoServices productoService
+@rendermode InteractiveServer
+
+<PageTitle>Detalles del producto</PageTitle>
+
+@if (productos != null)
+{
+    <div class="card">
+        <div class="card-header">
+            <h1>Detalles del producto</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>ID:</label>
+                    <InputNumber @bind-Value="productos.ProductoId" class="form-control" Disabled="true"></InputNumber>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Nombre:</label>
+                    <InputText @bind-Value="productos.Nombre" class="form-control" Disable="true"></InputText>
+                    <ValidationMessage For="@(() => productos.Nombre)" />
+                </div>
+
+
+                <div class="col-md-3">
+                    <label>Fecha de vencimiento:</label>
+                    <InputDate @bind-Value="productos.FechaVencimiento" class="form-control" Disable="true"></InputDate>
+                    <ValidationMessage For="@(() => productos.FechaVencimiento)" />
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+                <label>Descripcion:</label>
+                <InputText @bind-Value="productos.Descripcion" class="form-control" Disable="true"></InputText>
+                <ValidationMessage For="@(() => productos.Descripcion)" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Costo:</label>
+                    <InputNumber @bind-Value="productos.Costo" class="form-control" Disable="true"></InputNumber>
+                    <ValidationMessage For="@(() => productos.Costo)" />
+                </div>
+
+
+                <div class="col-md-3">
+                    <label>Precio:</label>
+                    <InputNumber @bind-Value="productos.Precio" class="form-control" Disable="true"></InputNumber>
+                    <ValidationMessage For="@(() => productos.Precio)" />
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+                <label>Existencia:</label>
+                <InputNumber @bind-Value="productos.Existencia" class="form-control" Disable="true"></InputNumber>
+                <ValidationMessage For="@(() => productos.Existencia)" />
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-center">
+            <a type="button" href="/Index/Productos/" class="btn btn-outline-primary"><span class="bi bi-arrow-left"></span> Volver</a>
+        </div>
+
+    </div>
+}
+else
+{
+    <h1>Producto no encontrado</h1>
+}
+
+
+@code {
+    [Parameter]
+    public int ProductoId { get; set; }
+    public Productos productos { get; set; } = new Productos();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ProductoId != 0)
+        {
+            productos = await productoService.Buscar(ProductoId);
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Index/Productos/");
+    }
+
+}

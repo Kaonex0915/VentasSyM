@@ -1,26 +1,26 @@
-﻿@page "/Create/Compras"
-@inject CompraServices compraService
+﻿@page "/Create/Ventas"
+@inject VentaServices ventaService
 @inject BlazoredToast notifications
 
 @rendermode InteractiveServer
 
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 
-<EditForm Model="compras" OnValidSubmit="Guardar">
+<EditForm Model="ventas" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
         <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Registro de Compras</h3>
+            <h3> <i class="fas fa-clipboard-list"></i> Registro de Ventas</h3>
         </div>
 
         <div class="card-body">
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="CompraId" class="form-label">CompraId:</label>
+                    <label for="CompraId" class="form-label">VentaId:</label>
                     <div class="input-group">
                         <div class=" sizeid">
-                            <InputNumber @bind-Value="compras.CompraId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                            <InputNumber @bind-Value="ventas.VentaId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
                         </div>
                     </div>
                 </div>
@@ -29,14 +29,14 @@
 
             <div class="mb-3">
                 <label for="Comprador" class="form-label">Comprador:</label>
-                <InputText @bind-Value="compras.Comprador" class="form-control" />
-                <ValidationMessage For="@(() => compras.Comprador)" />
+                <InputText @bind-Value="ventas.Comprador" class="form-control" />
+                <ValidationMessage For="@(() => ventas.Comprador)" />
             </div>
 
             <div class="mb-3">
-                <label for="Comprador" class="form-label">Vendedor:</label>
-                <InputText @bind-Value="compras.Vendedor" class="form-control" />
-                <ValidationMessage For="@(() => compras.Vendedor)" />
+                <label for="Vendedor" class="form-label">Vendedor:</label>
+                <InputText @bind-Value="ventas.Vendedor" class="form-control" />
+                <ValidationMessage For="@(() => ventas.Vendedor)" />
             </div>
 
             <fieldset class="border-success border border-1">
@@ -59,13 +59,13 @@
                         <div class="col-3">
                             <label>Cantidad</label>
                             <div class="input-group mb-3">
-                                <InputNumber @bind-Value="comprasDetalle.UnidadUtilizada" class="form-control"></InputNumber>
+                                <InputNumber @bind-Value="ventasDetalle.UnidadUtilizada" class="form-control"></InputNumber>
                             </div>
                         </div>
                         <div class="col-3">
                             <label>Precio: </label>
                             <div class="input-group mb-3">
-                                <InputNumber @bind-Value="comprasDetalle.Precio" class="form-control"></InputNumber>
+                                <InputNumber @bind-Value="ventasDetalle.Precio" class="form-control"></InputNumber>
                             </div>
                         </div>
 
@@ -87,7 +87,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach (var trabajoDetalles in Lista_CompraDetalle)
+                            @foreach (var trabajoDetalles in Lista_VentaDetalle)
                             {
                                 <tr>
                                     <td>@trabajoDetalles.ProductoId</td>
@@ -116,28 +116,28 @@
 
 
 @code {
-    public Compras compras { get; set; } = new Compras();
+    public Ventas ventas { get; set; } = new Ventas();
     private bool Existe = false;
     public int productoSeleccionado { get; set; }
-    public ComprasDetalle comprasDetalle { get; set; } = new ComprasDetalle();
-    public List<ComprasDetalle> Lista_CompraDetalle { get; set; } = new List<ComprasDetalle>();
+    public VentasDetalle ventasDetalle { get; set; } = new VentasDetalle();
+    public List<VentasDetalle> Lista_VentaDetalle { get; set; } = new List<VentasDetalle>();
     public List<Productos> Lista_Productos { get; set; } = new List<Productos>();
 
     protected override async Task OnInitializedAsync()
     {
-        Lista_Productos = await compraService.GetProductos();
+        Lista_Productos = await ventaService.GetProductos();
     }
 
     public void Nuevo()
     {
-        compras = new Compras();
+        ventas = new Ventas();
         Existe = false;
     }
 
     public async Task Guardar()
     {
-        compras.comprasDetalles = Lista_CompraDetalle;
-        var guardo = await compraService.Guardar(compras);
+        ventas.VentasDetalles = Lista_VentaDetalle;
+        var guardo = await ventaService.Guardar(ventas);
         if (guardo)
         {
             Nuevo();
@@ -149,32 +149,32 @@
         var seleccionProducto = Lista_Productos
         .FirstOrDefault(p => p.ProductoId == productoSeleccionado);
 
-        if (seleccionProducto != null && comprasDetalle.UnidadUtilizada > 0)
+        if (seleccionProducto != null && ventasDetalle.UnidadUtilizada > 0)
         {
-            comprasDetalle.Precio = seleccionProducto.Precio;
+            ventasDetalle.Precio = seleccionProducto.Precio;
 
-            var detalleNuevo = new ComprasDetalle
+            var detalleNuevo = new VentasDetalle
                 {
                     ProductoId = seleccionProducto.ProductoId,
-                    UnidadUtilizada = comprasDetalle.UnidadUtilizada,
+                    UnidadUtilizada = ventasDetalle.UnidadUtilizada,
                     Precio = seleccionProducto.Precio
                 };
 
 
 
-            Lista_CompraDetalle.Add(detalleNuevo);
-            comprasDetalle = new ComprasDetalle();
+            Lista_VentaDetalle.Add(detalleNuevo);
+            ventasDetalle = new VentasDetalle();
             productoSeleccionado = 0;
         }
     }
 
-    public void RemoverDetalle(ComprasDetalle detalleRemover)
+    public void RemoverDetalle(VentasDetalle detalleRemover)
     {
-        Lista_CompraDetalle.Remove(detalleRemover);
+        Lista_VentaDetalle.Remove(detalleRemover);
 
         productoSeleccionado = detalleRemover.ProductoId;
-        comprasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
-        comprasDetalle.Precio = detalleRemover.Precio;
+        ventasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
+        ventasDetalle.Precio = detalleRemover.Precio;
 
     }
 

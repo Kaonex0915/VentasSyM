@@ -1,0 +1,64 @@
+﻿@page "/Details/Compras"
+@page "/Details/Compras/{CompraId:int}"
+@inject CompraServices compraService
+
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+
+<PageTitle>Detalles de la compra</PageTitle>
+
+@if (compras != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header  bg-primary text-white text-center py-2 rounded">
+                <h3 class="text-center"><strong>Detalles de la compra</strong></h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>CompraId:</strong> @compras.CompraId</li>
+                                <li><strong>Comprador:</strong> @compras.Comprador</li>
+                                <li><strong>Vendedor:</strong> @compras.Vendedor</li>
+                                @foreach (var detalle in Lista_CompraDetalles)
+                                {
+                                    <li><strong>Producto: </strong>@detalle.Producto.Nombre</li>
+                                }
+                                <li><strong>Monto total:</strong> @compras.Total</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se halló el trabajo.</p>
+}
+
+@code {
+    [Parameter]
+    public int CompraId { get; set; }
+    public Compras? compras { get; set; } = new Compras();
+    public List<ComprasDetalle> Lista_CompraDetalles { get; set; } = new List<ComprasDetalle>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        compras = await compraService.Buscar(CompraId);
+
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Index");
+    }
+}

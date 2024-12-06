@@ -10,6 +10,7 @@ public class Context:DbContext
     public DbSet<Productos> Productos { get; set; }
     public DbSet<Compras> Compras { get; set; }
     public DbSet<Ventas> Ventas { get; set; }
+    public DbSet<Categorias> Categorias { get; set; }
     public DbSet<ComprasDetalle> ComprasDetalle { get; set; }
     public DbSet<VentasDetalle> VentasDetalles { get; set; }
 

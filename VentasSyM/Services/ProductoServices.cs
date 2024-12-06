@@ -72,7 +72,11 @@ namespace VentasSyM.Services
                 .ToListAsync();
         }
 
-
+        public async Task<Productos>? Buscar(int ProductoId)
+        {
+            await using var contexto = await DbFactory.CreateDbContextAsync();
+            return await contexto.Productos.AsNoTracking().FirstOrDefaultAsync(p => p.ProductoId == ProductoId);
+        }
 
     }
 }

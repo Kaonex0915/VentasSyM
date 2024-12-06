@@ -1,0 +1,80 @@
+﻿@page "/Delete/Categorias"
+@page "/Delete/Categorias/{CategoriaId:int}"
+@inject NavigationManager navigationManager
+@inject CategoriaServices categoriaService
+@rendermode InteractiveServer
+
+
+<PageTitle>Eliminar Categoria</PageTitle>
+
+@if (categorias != null)
+{
+    <EditForm Model="categorias" OnValidSubmit="Eliminar">
+        <DataAnnotationsValidator />
+        <div class="card">
+
+            <div class="card-header">
+                <h1>Eliminar Categoria</h1>
+            </div>
+
+            <div class="card-body">
+                <h3 class="text-danger text-center">¿Estás seguro de que quieres eliminar esta categoria?</h3>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>ID:</label>
+                        <InputNumber @bind-Value="categorias.CategoriaId" class="form-control" Disabled="true"></InputNumber>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Nombre:</label>
+                        <InputText @bind-Value="categorias.Nombre" class="form-control" Disabled="true"></InputText>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-outline-danger">Eliminar <i class=" bi bi-trash" /></button>
+                <a type="button" href="/Index/Categorias/" class="btn btn-outline-primary"><span class="bi bi-arrow-left mt-3"></span> Retroceder</a>
+            </div>
+        </div>
+    </EditForm>
+}
+else
+{
+    <p>Categoria no encontrada.</p>
+}
+
+
+@code {
+    [Parameter]
+    public int CategoriaId { get; set;  }
+    public Categorias categorias { get; set; } = new Categorias();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CategoriaId != 0)
+        {
+            categorias = await categoriaService.Buscar(CategoriaId);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (CategoriaId == 0 || categorias == null)
+        {
+            return;
+        }
+
+        if (await categoriaService.Eliminar(CategoriaId))
+        {
+            Volver();
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Index/Categorias/");
+    }
+
+}

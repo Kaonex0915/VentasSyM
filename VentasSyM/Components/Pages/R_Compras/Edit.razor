@@ -1,16 +1,13 @@
-﻿@page "/Create/Compras"
+﻿﻿@page "/Edit/{CompraId:int}"
 @inject CompraServices compraService
-@inject BlazoredToast notifications
-
 @rendermode InteractiveServer
-
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 
 <EditForm Model="compras" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
         <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Registro de Compras</h3>
+            <h3> <i class="fas fa-clipboard-list"></i> Editar Compra</h3>
         </div>
 
         <div class="card-body">
@@ -26,7 +23,6 @@
                 </div>
             </div>
 
-
             <div class="mb-3">
                 <label for="Comprador" class="form-label">Comprador:</label>
                 <InputText @bind-Value="compras.Comprador" class="form-control" />
@@ -34,10 +30,11 @@
             </div>
 
             <div class="mb-3">
-                <label for="Comprador" class="form-label">Vendedor:</label>
+                <label for="Vendedor" class="form-label">Vendedor:</label>
                 <InputText @bind-Value="compras.Vendedor" class="form-control" />
                 <ValidationMessage For="@(() => compras.Vendedor)" />
             </div>
+
 
             <fieldset class="border-success border border-1">
                 <h3>Productos</h3>
@@ -59,14 +56,25 @@
                         <div class="col-3">
                             <label>Cantidad</label>
                             <div class="input-group mb-3">
-                                <InputNumber @bind-Value="comprasDetalle.UnidadUtilizada" class="form-control"></InputNumber>
+                                <InputNumber @bind-Value="compraDetalle.UnidadUtilizada" class="form-control"></InputNumber>
                             </div>
                         </div>
-                        <div class="col-3">
-                            <label>Precio: </label>
-                            <div class="input-group mb-3">
-                                <InputNumber @bind-Value="comprasDetalle.Precio" class="form-control"></InputNumber>
+                        <div class="row">
+                            <div class="col-3">
+                                <label>Precio: </label>
+                                <div class="input-group mb-3">
+                                    <InputNumber @bind-Value="compraDetalle.Precio" class="form-control"></InputNumber>
+                                </div>
                             </div>
+
+                            <div class="col">
+                                <InputCheckbox class="form-check-input" type="checkbox" id="checkboxNoLabel" @bind-Value="compras.Vendido" aria-label="..."></InputCheckbox>
+                                <label class="form-check-label" for="compraVendida">
+                                    Compra Vendida
+                                </label>
+                                <ValidationMessage For="@(() => compra.Vendido)" />
+                            </div>
+
                         </div>
 
                         <div class="col">
@@ -93,7 +101,7 @@
                                     <td>@trabajoDetalles.ProductoId</td>
                                     <td>@trabajoDetalles.UnidadUtilizada</td>
                                     <td>@trabajoDetalles.Precio</td>
-                                    <td><button @onclick="@(() => RemoverDetalle(trabajoDetalles))" class="btn btn-outline-danger" type="button"><i class="bi bi-trash">Eliminar</i></button></td>
+                                    <td><button @onclick="@(() => RemoverDetalle(trabajoDetalles))" class="btn btn-outline-danger" type="button"><i class="oi oi-trash">Eliminar</i></button></td>
                                 </tr>
                             }
                         </tbody>
@@ -102,6 +110,7 @@
 
                 </div>
             </fieldset>
+
         </div>
 
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
@@ -114,18 +123,40 @@
     </div>
 </EditForm>
 
-
 @code {
+    [Parameter]
+    public int CompraId { get; set; }
     public Compras compras { get; set; } = new Compras();
     private bool Existe = false;
     public int productoSeleccionado { get; set; }
-    public ComprasDetalle comprasDetalle { get; set; } = new ComprasDetalle();
+    public ComprasDetalle compraDetalle { get; set; } = new ComprasDetalle();
     public List<ComprasDetalle> Lista_CompraDetalle { get; set; } = new List<ComprasDetalle>();
     public List<Productos> Lista_Productos { get; set; } = new List<Productos>();
 
+
     protected override async Task OnInitializedAsync()
     {
+        Lista_CompraDetalle = await compraService.ListarComprasDetalle(CompraId);
         Lista_Productos = await compraService.GetProductos();
+
+        compras.CompraId = CompraId;
+        await Buscar();
+
+    }
+
+    public async Task Buscar()
+    {
+        Existe = false;
+        var CotizacionE = await compraService.Buscar(compras.CompraId);
+
+        if (CotizacionE != null)
+        {
+            compras = CotizacionE;
+        }
+        else
+        {
+            Nuevo();
+        }
     }
 
     public void Nuevo()
@@ -143,6 +174,13 @@
             Nuevo();
         }
     }
+
+    public async Task Eliminar()
+    {
+        var eliminado = await compraService.Eliminar(compras.CompraId);
+        Nuevo();
+    }
+
 
     public void AgregarDetalle()
     {
@@ -168,14 +206,16 @@
         }
     }
 
-    public void RemoverDetalle(ComprasDetalle detalleRemover)
+    public async Task RemoverDetalle(ComprasDetalle detalleRemover)
     {
+
+        var detalleEliminado = await compraService.EliminarDetalle(detalleRemover.DetalleId);
+
         Lista_CompraDetalle.Remove(detalleRemover);
 
         productoSeleccionado = detalleRemover.ProductoId;
         comprasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
         comprasDetalle.Precio = detalleRemover.Precio;
-
     }
 
 }

@@ -1,0 +1,58 @@
+﻿@page "/Detail/Categorias"
+@page "/Detail/Categorias/{CategoriaId:int}"
+@inject NavigationManager navigationManager
+@inject CategoriaServices categoriaService
+@rendermode InteractiveServer
+
+<PageTitle>Detalle de la categoria</PageTitle>
+
+@if (categorias != null)
+{
+    <div class="card">
+        <div class="card-header">
+            <h1>Detalles de la categoria</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>ID:</label>
+                    <InputNumber @bind-Value="categorias.CategoriaId" class="form-control" Disabled="true"></InputNumber>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Nombre:</label>
+                    <InputText @bind-Value="categorias.Nombre" class="form-control" Disabled="true"></InputText>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-center">
+            <a type="button" href="/Index/Categorias/" class="btn btn-outline-primary"><span class="bi bi-arrow-left"></span> Volver</a>
+        </div>
+
+    </div>
+}
+else
+{
+    <h1>Categoria no encontrada</h1>
+}
+
+
+@code{
+    [Parameter]
+    public int CategoriaId { get; set; }
+    public Categorias categorias { get; set; } = new Categorias();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CategoriaId != 0)
+        {
+            categorias = await categoriaService.Buscar(CategoriaId);
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Index/Categorias/");
+    }
+
+}
