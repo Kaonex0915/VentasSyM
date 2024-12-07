@@ -1,4 +1,4 @@
-﻿@page "/Index"
+﻿@page "/Index/Compras/"
 @rendermode InteractiveServer
 @inject CompraServices compraService 
 
@@ -68,19 +68,19 @@
                     </td>
 
                     <td>
-                        <a class="btn btn-outline-success" href="/Edit/@compra.CompraId">
+                        <a class="btn btn-outline-success" href="/Edit/Compras/@compra.CompraId">
                             <span class="bi bi-pencil fs-5"></span>
                         </a>
                     </td>
 
                     <td>
-                        <div>
+                      @*  <div>
                             <InputCheckbox class="form-check-input" type="checkbox" id="checkboxNoLabel" @bind-Value="compra.Vendido" onchange="CheckboxChanged" disabled aria-label="..."></InputCheckbox>
-                        </div>
+                    </div>*@
                     </td>
 
                     <td>
-                        <a class="btn btn-outline-danger" href="/Delete/@compra.CompraId">
+                        <a class="btn btn-outline-danger" href="/Delete/Compras/@compra.CompraId">
                             <span class="bi bi-trash fs-5"></span>
                         </a>
                     </td>

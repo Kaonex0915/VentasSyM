@@ -1,6 +1,6 @@
-﻿@page "/Create/Compras"
+﻿@page "/Create/Compras/"
 @inject CompraServices compraService
-@inject BlazoredToast notifications
+@inject ToastService notifications
 
 @rendermode InteractiveServer
 
@@ -108,7 +108,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-                <a type="button" href="/Index" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+                <a type="button" href="/Index/Compras" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
     </div>
@@ -176,6 +176,11 @@
         comprasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
         comprasDetalle.Precio = detalleRemover.Precio;
 
+    }
+
+    private void Notificacion()
+    {
+        notifications.Notify(new(ToastType.Danger,"Notificacion de prueba "));
     }
 
 }

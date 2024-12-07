@@ -6,11 +6,13 @@ namespace VentasSyM.Models;
 public class ComprasDetalle
 {
     [Key]
-    public int DetalleId { get; set; } 
+    public int DetalleId { get; set; }
     [Required]
     public int CompraId { get; set; }
-    [Required]
-    public int ProductoId{ get; set; }
+    public int ProductoId { get; set; }
+
+    [ForeignKey("ProductoId")]
+    public Productos? Productos { get; set; }
     [Required]
     public int UnidadUtilizada { get; set; }
     [Required]

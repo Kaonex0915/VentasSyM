@@ -1,4 +1,4 @@
-﻿﻿@page "/Edit/{CompraId:int}"
+﻿@page "/Edit/Compras/{CompraId:int}"
 @inject CompraServices compraService
 @rendermode InteractiveServer
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
@@ -67,13 +67,13 @@
                                 </div>
                             </div>
 
-                            <div class="col">
+                           @* <div class="col">
                                 <InputCheckbox class="form-check-input" type="checkbox" id="checkboxNoLabel" @bind-Value="compras.Vendido" aria-label="..."></InputCheckbox>
                                 <label class="form-check-label" for="compraVendida">
                                     Compra Vendida
                                 </label>
                                 <ValidationMessage For="@(() => compra.Vendido)" />
-                            </div>
+                            </div>*@
 
                         </div>
 
@@ -117,7 +117,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-                <a type="button" href="/Index" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+                <a type="button" href="/Index/Compras" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
     </div>
@@ -187,21 +187,21 @@
         var seleccionProducto = Lista_Productos
         .FirstOrDefault(p => p.ProductoId == productoSeleccionado);
 
-        if (seleccionProducto != null && comprasDetalle.UnidadUtilizada > 0)
+        if (seleccionProducto != null && compraDetalle.UnidadUtilizada > 0)
         {
-            comprasDetalle.Precio = seleccionProducto.Precio;
+            compraDetalle.Precio = seleccionProducto.Precio;
 
             var detalleNuevo = new ComprasDetalle
                 {
                     ProductoId = seleccionProducto.ProductoId,
-                    UnidadUtilizada = comprasDetalle.UnidadUtilizada,
+                    UnidadUtilizada = compraDetalle.UnidadUtilizada,
                     Precio = seleccionProducto.Precio
                 };
 
 
 
             Lista_CompraDetalle.Add(detalleNuevo);
-            comprasDetalle = new ComprasDetalle();
+            compraDetalle = new ComprasDetalle();
             productoSeleccionado = 0;
         }
     }
@@ -214,8 +214,8 @@
         Lista_CompraDetalle.Remove(detalleRemover);
 
         productoSeleccionado = detalleRemover.ProductoId;
-        comprasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
-        comprasDetalle.Precio = detalleRemover.Precio;
+        compraDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
+        compraDetalle.Precio = detalleRemover.Precio;
     }
 
 }

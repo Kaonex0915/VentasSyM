@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using VentasSyM.DAL;
+using VentasSyM.Data;
 using VentasSyM.Models;
 
 namespace VentasSyM.Services
 {
-    public class VentaServices(IDbContextFactory<Context> DbFactory)
+    public class VentaServices(IDbContextFactory<ApplicationDbContext> DbFactory)
     {
-        private readonly Context _context;
+        private readonly ApplicationDbContext _context;
 
         public async Task<bool> Existe(int VentaId)
         {

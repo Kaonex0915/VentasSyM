@@ -12,9 +12,6 @@ public class Compras
     [Required]
     public string Comprador { get; set; }
     [Required]
-    public int ProductoId { get; set; }
-   
-    [Required]
     public int UnidadesPorLote { get; set; }
 
     [Required]

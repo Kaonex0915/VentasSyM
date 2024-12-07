@@ -1,6 +1,7 @@
-﻿@page "/Create/Productos"
+﻿@page "/Create/Productos/"
 @page "/Create/Productos/{ProductoId:int}"
 @inject ProductoServices productoService
+@inject CategoriaServices categoriaService
 @rendermode InteractiveServer
 
 
@@ -39,6 +40,19 @@
                     <ValidationMessage For="@(() => productos.FechaVencimiento)" />
                 </div>
 
+            </div>
+
+            <div class="col-3">
+                <label>Categoria</label>
+                <div class="input-group mb-3">
+                    <InputSelect class="form-select" @bind-Value="CategoriaSeleccionada">
+                        <option value="0" disabled selected>Seleccione una categoria</option>
+                        @foreach (var categoria in Lista_Categorias)
+                        {
+                            <option value="@categoria.CategoriaId">@categoria.Nombre</option>
+                        }
+                    </InputSelect>
+                </div>
             </div>
 
             <div class="col-md-6">
@@ -87,6 +101,14 @@
     public int? ProductoId { get; set; }
     public Productos productos { get; set; } = new Productos();
     private bool Existe = false;
+    public List<Categorias> Lista_Categorias { get; set; } = new List<Categorias>();
+    public int CategoriaSeleccionada { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Lista_Categorias = await categoriaService.Listar(c => true);
+    }
 
     public void Nuevo()
     {

@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace VentasSyM.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateIdentitySchema : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,75 @@ namespace VentasSyM.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categorias",
+                columns: table => new
+                {
+                    CategoriaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categorias", x => x.CategoriaId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Compras",
+                columns: table => new
+                {
+                    CompraId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FechaCompra = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Comprador = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UnidadesPorLote = table.Column<int>(type: "int", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Vendedor = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Compras", x => x.CompraId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Productos",
+                columns: table => new
+                {
+                    ProductoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaVencimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Categoria = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Costo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Existencia = table.Column<int>(type: "int", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    TieneFechaVencimiento = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Productos", x => x.ProductoId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ventas",
+                columns: table => new
+                {
+                    VentaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FechaVendido = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Comprador = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Vendedor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
+                    UnidadesPorLote = table.Column<int>(type: "int", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ventas", x => x.VentaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +225,56 @@ namespace VentasSyM.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ComprasDetalle",
+                columns: table => new
+                {
+                    DetalleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompraId = table.Column<int>(type: "int", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
+                    UnidadUtilizada = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComprasDetalle", x => x.DetalleId);
+                    table.ForeignKey(
+                        name: "FK_ComprasDetalle_Compras_CompraId",
+                        column: x => x.CompraId,
+                        principalTable: "Compras",
+                        principalColumn: "CompraId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComprasDetalle_Productos_ProductoId",
+                        column: x => x.ProductoId,
+                        principalTable: "Productos",
+                        principalColumn: "ProductoId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VentasDetalles",
+                columns: table => new
+                {
+                    DetalleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VentaId = table.Column<int>(type: "int", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
+                    UnidadUtilizada = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VentasDetalles", x => x.DetalleId);
+                    table.ForeignKey(
+                        name: "FK_VentasDetalles_Ventas_VentaId",
+                        column: x => x.VentaId,
+                        principalTable: "Ventas",
+                        principalColumn: "VentaId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -194,6 +313,21 @@ namespace VentasSyM.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComprasDetalle_CompraId",
+                table: "ComprasDetalle",
+                column: "CompraId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComprasDetalle_ProductoId",
+                table: "ComprasDetalle",
+                column: "ProductoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VentasDetalles_VentaId",
+                table: "VentasDetalles",
+                column: "VentaId");
         }
 
         /// <inheritdoc />
@@ -215,10 +349,28 @@ namespace VentasSyM.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Categorias");
+
+            migrationBuilder.DropTable(
+                name: "ComprasDetalle");
+
+            migrationBuilder.DropTable(
+                name: "VentasDetalles");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Compras");
+
+            migrationBuilder.DropTable(
+                name: "Productos");
+
+            migrationBuilder.DropTable(
+                name: "Ventas");
         }
     }
 }

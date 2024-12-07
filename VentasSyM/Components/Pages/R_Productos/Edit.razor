@@ -1,4 +1,4 @@
-﻿@page "/Edit/Productos"
+﻿@page "/Edit/Productos/"
 @page "/Edit/Productos/{ProductoId:int}"
 @rendermode InteractiveServer
 @inject NavigationManager navigationManager
@@ -69,7 +69,7 @@
         <div class="card-footer d-flex justify-content-center">
             <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
             <button type="submit" class="btn btn-outline-success">Guardar <i class="bi bi-floppy mt-3" /></button>
-            <a class="btn btn-outline-primary" href="/Index/Categorias/">
+            <a class="btn btn-outline-primary" href="/Index/Productos/">
                 <span class="bi bi-arrow-left mt-3"></span> Retroceder
             </a>
         </div>

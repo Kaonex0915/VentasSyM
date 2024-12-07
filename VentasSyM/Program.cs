@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VentasSyM.Components;
 using VentasSyM.Components.Account;
-using VentasSyM.DAL;
 using VentasSyM.Data;
 using VentasSyM.Services;
 
@@ -18,8 +17,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-var ConStr = builder.Configuration.GetConnectionString("ConStr");
-builder.Services.AddDbContextFactory<Context>(options => options.UseSqlServer(ConStr));
+//var ConStr = builder.Configuration.GetConnectionString("ConStr");
+//builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(ConStr));
 builder.Services.AddBlazoredToast();
 builder.Services.AddAuthentication(options =>
     {
@@ -27,13 +26,16 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
+builder.Services.AddBlazorBootstrap();
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+options.UseSqlServer(connectionString));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddScoped<CategoriaServices>();
 builder.Services.AddScoped<CompraServices>();
 builder.Services.AddScoped<ProductoServices>();
 builder.Services.AddScoped<VentaServices>();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()

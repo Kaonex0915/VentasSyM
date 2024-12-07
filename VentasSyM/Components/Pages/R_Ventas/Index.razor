@@ -1,4 +1,4 @@
-﻿@page "/Index"
+﻿@page "/Index/Ventas/"
 @rendermode InteractiveServer
 @inject VentaServices ventaService
 
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="col-md-3 text-end">
-                <a href="/Create/Ventas" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
+                <a href="/Create/Ventas/" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
             </div>
 
         </div>
@@ -66,21 +66,13 @@
                             <span class="bi bi-card-heading fs-5"></span>
                         </a>
                     </td>
-
                     <td>
-                        <a class="btn btn-outline-success" href="/Edit/@venta.VentaId">
+                        <a class="btn btn-outline-success" href="/Edit/Ventas/@venta.VentaId">
                             <span class="bi bi-pencil fs-5"></span>
                         </a>
                     </td>
-
                     <td>
-                        <div>
-                            <InputCheckbox class="form-check-input" type="checkbox" id="checkboxNoLabel" @bind-Value="venta.Vendido" onchange="CheckboxChanged" disabled aria-label="..."></InputCheckbox>
-                        </div>
-                    </td>
-
-                    <td>
-                        <a class="btn btn-outline-danger" href="/Delete/@venta.VentaId">
+                        <a class="btn btn-outline-danger" href="/Delete/Ventas/@venta.VentaId">
                             <span class="bi bi-trash fs-5"></span>
                         </a>
                     </td>

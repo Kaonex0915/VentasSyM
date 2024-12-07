@@ -1,4 +1,4 @@
-﻿@page "/Edit/{VentaId:int}"
+﻿@page "/Edit/Ventas/{VentaId:int}"
 @inject VentaServices ventaService
 @rendermode InteractiveServer
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
@@ -12,7 +12,7 @@
 
         <div class="card-body">
 
-            <div class="row">
+           <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="VentaId" class="form-label">VentaId:</label>
                     <div class="input-group">
@@ -22,7 +22,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="mb-3">
                 <label for="Comprador" class="form-label">Comprador:</label>
                 <InputText @bind-Value="ventas.Comprador" class="form-control" />
@@ -67,13 +67,13 @@
                                 </div>
                             </div>
 
-                            <div class="col">
+                            @*<div class="col">
                                 <InputCheckbox class="form-check-input" type="checkbox" id="checkboxNoLabel" @bind-Value="ventas.Vendido" aria-label="..."></InputCheckbox>
                                 <label class="form-check-label" for="ventaVendida">
                                     Venta Vendida
                                 </label>
                                 <ValidationMessage For="@(() => ventas.Vendido)" />
-                            </div>
+                            </div>*@
 
                         </div>
 
@@ -117,7 +117,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-                <a type="button" href="/Index" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+                <a type="button" href="/Index/Ventas/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
     </div>

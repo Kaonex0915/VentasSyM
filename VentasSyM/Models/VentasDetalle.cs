@@ -10,9 +10,10 @@ public class VentasDetalle
 
     [Required]
     public int VentaId { get; set; }
-
-    [Required]
     public int ProductoId { get; set; }
+
+    [ForeignKey("ProductoId")]
+    public Productos? Productos { get; set; }
     [Required]
     public int UnidadUtilizada { get; set; }
     [Required]

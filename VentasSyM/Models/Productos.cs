@@ -17,12 +17,12 @@ public class Productos
     public DateTime FechaVencimiento { get; set; }
     
     [Required]
-    public string Categoria { get; set; }
+    public int CategoriaId { get; set; }
 
     [Required]
-    public Decimal Costo { get; set; }
+    public decimal Costo { get; set; }
     [Required]
-    public Decimal Precio { get; set; }
+    public decimal Precio { get; set; }
     [Required]
     public int Existencia { get; set; }
     [Required]

@@ -1,0 +1,141 @@
+﻿@page "/Index/Productos/"
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+@inject ProductoServices productoService
+
+<EditForm Model="ListaProductos" class="p-3 rounded">
+
+    <div class="card-header bg-light text-center py-2">
+        <h3 class="mb-0">Consulta de Productos</h3>
+    </div>
+
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="id">ProductoId</option>
+                    <option value="nombre">Nombre</option>
+                    <option value="descripcion">Descripcion</option>
+                    <option value="categoria">Categoria</option>
+                    <option value="costo">Costo</option>
+                    <option value="precio">Precio</option>
+                    <option value="existencia">Existencia</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="ValorFiltro" class="form-label">Busqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3 text-end">
+                <a href="/Create/Productos" class="btn btn-primary bi bi-plus-square mt-3 "> Crear</a>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered text-center">
+        <thead class="bg-light">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Categoria</th>
+                <th>Costo</th>
+                <th>Precio</th>
+                <th>Existencia</th>
+                <th>Ver</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in ListaProductos)
+            {
+                <tr>
+                    <td>@producto.ProductoId</td>
+                    <td>@producto.Nombre</td>
+                    <td>@producto.Descripcion</td>
+                    <td>@producto.CategoriaId</td>
+                    <td>@producto.Costo</td>
+                    <td>@producto.Precio</td>
+                    <td>@producto.Existencia</td>
+                    <td>
+                        <a class="btn btn-outline-primary" href="/Detail/Productos/@producto.ProductoId">
+                            <span class="bi bi-eye "></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-success" href="/Edit/Productos/@producto.ProductoId">
+                            <span class="bi bi-pencil"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-danger" href="/Delete/Productos/@producto.ProductoId">
+                            <span class="bi bi-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</EditForm>
+
+@code {
+
+    public Productos productos = new Productos();
+
+    public List<Productos> ListaProductos = new List<Productos>();
+
+    private string filtro = "id";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaProductos = await productoService.Listar(p => true);
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await productoService.Guardar(productos);
+    }
+
+    private async Task Buscar()
+    {
+        if (valorFiltro.Trim() != "")
+        {
+            if (filtro == "id" && int.TryParse(valorFiltro, out int ProductoId))
+            {
+                ListaProductos = await productoService.Listar(p => p.ProductoId == ProductoId);
+            }
+            else if (filtro == "nombre")
+            {
+                ListaProductos = await productoService.Listar(p => p.Nombre == valorFiltro);
+            }
+            else if (filtro == "descripcion")
+            {
+                ListaProductos = await productoService.Listar(p => p.Descripcion == valorFiltro);
+            }
+            else if (filtro == "costo" && int.TryParse(valorFiltro, out int Costo))
+            {
+                ListaProductos = await productoService.Listar(p => p.Costo == Costo);
+            }
+            else if (filtro == "precio" && decimal.TryParse(valorFiltro, out decimal Precio))
+            {
+                ListaProductos = await productoService.Listar(p => p.Precio == Precio);
+            }
+            else if (filtro == "Existencia" && int.TryParse(valorFiltro, out int Existencia))
+            {
+                ListaProductos = await productoService.Listar(p => p.Existencia == Existencia);
+            }
+        }
+        else
+        {
+            ListaProductos = await productoService.Listar(p => true);
+        }
+    }
+}

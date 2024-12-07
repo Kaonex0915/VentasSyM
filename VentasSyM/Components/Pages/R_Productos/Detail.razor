@@ -1,97 +1,69 @@
-﻿@page "/Detail/Productos"
+﻿@page "/Detail/Productos/"
 @page "/Detail/Productos/{ProductoId:int}"
-@inject NavigationManager navigationManager
 @inject ProductoServices productoService
+
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Detalles del producto</PageTitle>
+<PageTitle>Detalles del combo</PageTitle>
 
 @if (productos != null)
 {
-    <div class="card">
-        <div class="card-header">
-            <h1>Detalles del producto</h1>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <label>ID:</label>
-                    <InputNumber @bind-Value="productos.ProductoId" class="form-control" Disabled="true"></InputNumber>
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header  bg-primary text-white text-center py-2 rounded">
+                <h3 class="text-center"><strong>Detalles del combo</strong></h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>ComboId:</strong> @productos.ProductoId</li>
+                                <li><strong>Nombre:</strong> @productos.Nombre</li>
+                                <li><strong>Descripcion:</strong> @productos.Descripcion</li>
+                                <li><strong>Fecha de vencimiento:</strong> @productos.FechaVencimiento</li>
+                                <li><strong>CategoriaId:</strong> @productos.CategoriaId</li>
+                                <li><strong>Costo:</strong> @productos.Costo</li>
+                                <li><strong>Precio:</strong> @productos.Precio</li>
+                                <li><strong>Existencia:</strong> @productos.Existencia</li>
+                                <li><strong>Cantidad:</strong> @productos.Cantidad</li>
+                                @*@foreach (var detalle in Lista_CombosDetalles)
+                                {
+                                    <li><strong>Articulo: </strong>@detalle.Articulos.Descripcion</li>
+                                }*@
+                                <li><strong>Monto total:</strong> @productos.Precio</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-3">
-                    <label>Nombre:</label>
-                    <InputText @bind-Value="productos.Nombre" class="form-control" Disable="true"></InputText>
-                    <ValidationMessage For="@(() => productos.Nombre)" />
-                </div>
-
-
-                <div class="col-md-3">
-                    <label>Fecha de vencimiento:</label>
-                    <InputDate @bind-Value="productos.FechaVencimiento" class="form-control" Disable="true"></InputDate>
-                    <ValidationMessage For="@(() => productos.FechaVencimiento)" />
-                </div>
-
-            </div>
-
-            <div class="col-md-6">
-                <label>Descripcion:</label>
-                <InputText @bind-Value="productos.Descripcion" class="form-control" Disable="true"></InputText>
-                <ValidationMessage For="@(() => productos.Descripcion)" />
-            </div>
-
-            <div class="row">
-                <div class="col-md-3">
-                    <label>Costo:</label>
-                    <InputNumber @bind-Value="productos.Costo" class="form-control" Disable="true"></InputNumber>
-                    <ValidationMessage For="@(() => productos.Costo)" />
-                </div>
-
-
-                <div class="col-md-3">
-                    <label>Precio:</label>
-                    <InputNumber @bind-Value="productos.Precio" class="form-control" Disable="true"></InputNumber>
-                    <ValidationMessage For="@(() => productos.Precio)" />
-                </div>
-
-            </div>
-
-            <div class="col-md-6">
-                <label>Existencia:</label>
-                <InputNumber @bind-Value="productos.Existencia" class="form-control" Disable="true"></InputNumber>
-                <ValidationMessage For="@(() => productos.Existencia)" />
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
             </div>
         </div>
-        <div class="card-footer d-flex justify-content-center">
-            <a type="button" href="/Index/Productos/" class="btn btn-outline-primary"><span class="bi bi-arrow-left"></span> Volver</a>
-        </div>
-
     </div>
 }
 else
 {
-    <h1>Producto no encontrado</h1>
+    <p>No se halló el trabajo.</p>
 }
-
 
 @code {
     [Parameter]
     public int ProductoId { get; set; }
-    public Productos productos { get; set; } = new Productos();
+    public Productos? productos { get; set; } = new Productos();
+   //public List<RegistroComboDetalle> Lista_CombosDetalles { get; set; } = new List<RegistroComboDetalle>();
 
     protected override async Task OnInitializedAsync()
     {
-        if (ProductoId != 0)
-        {
-            productos = await productoService.Buscar(ProductoId);
-        }
+        productos = await productoService.Buscar(ProductoId);
+        //Lista_CombosDetalles = await registroComboService.BuscarTrabajoDetalle(ComboId);
     }
 
     public void Volver()
     {
         navigationManager.NavigateTo("/Index/Productos/");
     }
-
 }

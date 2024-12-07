@@ -1,4 +1,4 @@
-﻿@page "/Delete/Ventas"
+﻿@page "/Delete/Ventas/"
 @page "/Delete/Ventas/{CompraId:int}"
 @inject VentaServices ventaService
 @inject NavigationManager navigationManager
@@ -7,7 +7,7 @@
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 <PageTitle>Cancelar Venta</PageTitle>
 
-@if (compras != null)
+@if (ventas != null)
 {
     <div class="container">
         <div class="card shadow-header">
