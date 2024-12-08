@@ -48,6 +48,7 @@
                 <th>Total</th>
                 <th>Detalle</th>
                 <th>Editar</th>
+                <th>Devoluciones</th>
                 <th>Vendido</th>
                 <th>Eliminar</th>
             </tr>
@@ -72,11 +73,21 @@
                         </a>
                     </td>
                     <td>
+                        <a class="btn btn-outline-success" href="/DevolucionesPage/@venta.VentaId">
+                            <span class="bi bi-pencil fs-5"></span>
+                        </a>
+                    </td>
+
+                    <td>
                         <a class="btn btn-outline-danger" href="/Delete/Ventas/@venta.VentaId">
                             <span class="bi bi-trash fs-5"></span>
                         </a>
                     </td>
+
+
                 </tr>
+
+
             }
         </tbody>
     </table>

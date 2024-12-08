@@ -1,30 +1,172 @@
-﻿@page "/DevolucionesPage"
+﻿@page "/DevolucionesPage/{VentaId:int}"
 @inject DevolucionesServices devolucionService
+@inject VentaServices ventaService
+@inject CompraServices compraService
 @inject ToastService notifications
 
 @rendermode InteractiveServer
 
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 
+<EditForm Model="devolucion" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white" style="text-align: center;">
+            <h3> <i class="fas fa-clipboard-list"></i> Registro de Devoluciones</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="CompraId" class="form-label">DevolucionId:</label>
+                    <div class="input-group">
+                        <div class=" sizeid">
+                            <InputNumber @bind-Value="devolucion.DevolucionId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mb-3">
+                <label for="Comprador" class="form-label">Comprador:</label>
+                <InputText @bind-Value="devolucion.Comprador" class="form-control" readonly />
+                <ValidationMessage For="@(() => devolucion.Comprador)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Comprador" class="form-label">Vendedor:</label>
+                <InputText @bind-Value="devolucion.Vendedor" class="form-control" readonly />
+                <ValidationMessage For="@(() => devolucion.Vendedor)" />
+            </div>
+
+
+            <div class="mb-3">
+                <label for="Fecha" class="form-label">Fecha:</label>
+                <InputDate @bind-Value="devolucion.Fecha" class="form-control" readonly />
+                <ValidationMessage For="@(() => devolucion.Fecha)" />
+            </div>
+
+            <fieldset class="border-success border border-1">
+                <h3>Devoluciones detalle</h3>
+                <div>
+                    <div class="row">
+                        <div class="col-3">
+                            <label>Productos</label>
+                            <div class="input-group mb-3">
+                                <InputSelect class="form-select" @bind-Value="productoSeleccionado">
+                                    <option value="0" disabled selected>Seleccione un producto</option>
+                                    @foreach (var producto in Lista_Productos)
+                                    {
+                                        <option value="@producto.ProductoId">@producto.Nombre</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <label>Cantidad</label>
+                            <div class="input-group mb-3">
+                                <InputNumber @bind-Value="devolucionDetalle.Cantidad" class="form-control"></InputNumber>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <label>Precio: </label>
+                            <div class="input-group mb-3">
+                                <InputNumber @bind-Value="devolucionDetalle.Precio" class="form-control"></InputNumber>
+                            </div>
+
+                            <label>Motivo: </label>
+                            <div class="input-group mb-3">
+                                <InputText @bind-Value="devolucionDetalle.Motivo" class="form-control"></InputText>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary"><i class="bi bi-plus">Agregar</i></button>
+                        </div>
+
+
+                    </div>
+
+                    <br>
+                    <table class="table table-bordered table-light m-1">
+                        <thead class="thead">
+                            <tr class="table">
+                                <th>Producto Id</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                @* <th>Motivo</th> *@
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var devolucionDetalle in Lista_VentaDetalle)
+                            {
+                                <tr>
+                                    <td>@devolucionDetalle.ProductoId</td>
+                                    <td>@devolucionDetalle.UnidadUtilizada</td>
+                                    <td>@devolucionDetalle.Precio</td>
+                                    @* <td>@devolucionDetalle.Motivo</td> *@
+                                    <td><button @onclick="@(() => RemoverDetalle(devolucionDetalle))" class="btn btn-outline-danger" type="button"><i class="bi bi-trash">Eliminar</i></button></td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                <a type="button" href="/Index/Compras" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 
 
 @code {
+    [Parameter]
+    public int VentaId { get; set; }
+
     public Devoluciones devolucion { get; set; } = new Devoluciones();
+    public Ventas ventas { get; set; } = new Ventas();
+    public VentasDetalle ventas2 { get; set; } = new VentasDetalle();
     private bool Existe = false;
-    public int productoSeleccionado { get; set; }
+    public int? productoSeleccionado { get; set; }
     public DevolucionDetalle devolucionDetalle { get; set; } = new DevolucionDetalle();
     public List<DevolucionDetalle> Lista_DevolucionDetalle { get; set; } = new List<DevolucionDetalle>();
+    public List<ComprasDetalle> Lista_CompraDetalle { get; set; } = new List<ComprasDetalle>();
+    public List<VentasDetalle> Lista_VentaDetalle { get; set; } = new List<VentasDetalle>();
     public List<Productos> Lista_Productos { get; set; } = new List<Productos>();
 
     protected override async Task OnInitializedAsync()
     {
+        ventas2 = await ventaService.BuscarVentaDetalleN(VentaId);
         Lista_Productos = await devolucionService.GetProductos();
+        Lista_CompraDetalle = await compraService.ListarComprasDetalle(VentaId);
+
+        await CargarDatos();
     }
     public void Nuevo()
     {
         devolucion = new Devoluciones();
         Existe = false;
+    }
+    public async Task CargarDatos()
+    {
+        ventas = await ventaService.Buscar(VentaId);
+        devolucion.Comprador = ventas.Comprador;
+        devolucion.Vendedor = ventas.Vendedor;
+        devolucion.Fecha = DateTime.Now;
+        //devolucion = ventas;
     }
 
     public async Task Guardar()
@@ -53,20 +195,18 @@
                     Precio = seleccionProducto.Precio
                 };
 
-
-
             Lista_DevolucionDetalle.Add(detalleNuevo);
             devolucionDetalle = new DevolucionDetalle();
             productoSeleccionado = 0;
         }
     }
 
-    public void RemoverDetalle(DevolucionDetalle detalleRemover)
+    public void RemoverDetalle(VentasDetalle detalleRemover)
     {
-        Lista_DevolucionDetalle.Remove(detalleRemover);
+        Lista_VentaDetalle.Remove(detalleRemover);
 
         productoSeleccionado = detalleRemover.ProductoId;
-        devolucionDetalle.Cantidad = detalleRemover.Cantidad;
+        devolucionDetalle.Cantidad = detalleRemover.UnidadUtilizada;
         devolucionDetalle.Precio = detalleRemover.Precio;
 
     }

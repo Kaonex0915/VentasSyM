@@ -92,6 +92,14 @@ namespace VentasSyM.Services
             return cantidad > 0;
         }
 
+        public async Task<VentasDetalle> BuscarVentaDetalleN(int VentaId)
+        {
+            await using var contexto = await DbFactory.CreateDbContextAsync();
+            return await contexto.VentasDetalles
+                .AsNoTracking()
+                .FirstOrDefaultAsync(v => v.DetalleId == VentaId);
+        }
+
 
         public async Task<bool> EliminarDetalle(int detalleId)
         {
