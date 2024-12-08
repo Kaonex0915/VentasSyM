@@ -1,0 +1,79 @@
+﻿@page "/DevolucionesPage"
+@inject DevolucionesServices devolucionService
+@inject ToastService notifications
+
+@rendermode InteractiveServer
+
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+
+
+
+
+@code {
+    public Devoluciones devolucion { get; set; } = new Devoluciones();
+    private bool Existe = false;
+    public int productoSeleccionado { get; set; }
+    public DevolucionDetalle devolucionDetalle { get; set; } = new DevolucionDetalle();
+    public List<DevolucionDetalle> Lista_DevolucionDetalle { get; set; } = new List<DevolucionDetalle>();
+    public List<Productos> Lista_Productos { get; set; } = new List<Productos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Lista_Productos = await devolucionService.GetProductos();
+    }
+    public void Nuevo()
+    {
+        devolucion = new Devoluciones();
+        Existe = false;
+    }
+
+    public async Task Guardar()
+    {
+        devolucion.DevolucionDetalle = Lista_DevolucionDetalle;
+        var guardo = await devolucionService.Guardar(devolucion);
+        if (guardo)
+        {
+            Nuevo();
+        }
+    }
+
+    public void AgregarDetalle()
+    {
+        var seleccionProducto = Lista_Productos
+        .FirstOrDefault(p => p.ProductoId == productoSeleccionado);
+
+        if (seleccionProducto != null && devolucionDetalle.Cantidad > 0)
+        {
+            devolucionDetalle.Precio = seleccionProducto.Precio;
+
+            var detalleNuevo = new DevolucionDetalle
+                {
+                    ProductoId = seleccionProducto.ProductoId,
+                    Cantidad = devolucionDetalle.Cantidad,
+                    Precio = seleccionProducto.Precio
+                };
+
+
+
+            Lista_DevolucionDetalle.Add(detalleNuevo);
+            devolucionDetalle = new DevolucionDetalle();
+            productoSeleccionado = 0;
+        }
+    }
+
+    public void RemoverDetalle(DevolucionDetalle detalleRemover)
+    {
+        Lista_DevolucionDetalle.Remove(detalleRemover);
+
+        productoSeleccionado = detalleRemover.ProductoId;
+        devolucionDetalle.Cantidad = detalleRemover.Cantidad;
+        devolucionDetalle.Precio = detalleRemover.Precio;
+
+    }
+
+    private void Notificacion()
+    {
+        notifications.Notify(new(ToastType.Danger, "Notificacion de prueba "));
+    }
+
+}
