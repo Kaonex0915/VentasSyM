@@ -35,8 +35,6 @@ builder.Services.AddScoped<CategoriaServices>();
 builder.Services.AddScoped<CompraServices>();
 builder.Services.AddScoped<ProductoServices>();
 builder.Services.AddScoped<VentaServices>();
-
-
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()

@@ -1,0 +1,148 @@
+﻿@page "/metodoPagoVentas"
+@inject VentaServices ventaService
+@inject ToastService notifications
+
+@rendermode InteractiveServer
+
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+
+<div class="container-fluid mt-3">
+    <div class="row">
+       
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3><i class="bi bi-search"></i> Ventas Realizadas</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Comprador</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ListaVentas.Any())
+                            {
+                                @foreach (var venta in ListaVentas)
+                                {
+                                    <tr>
+                                        <td>@venta.VentaId</td>
+                                        <td>@venta.Comprador</td>
+                                        <td>@venta.Total</td>
+                                        <td>
+                                            <button type="button" class="btn btn-success" @onclick="(() => SeleccionarVenta(venta))">
+                                                <i class="bi bi-wallet"></i> Agregar Pago
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay ventas registradas.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <EditForm Model="ventaSeleccionada" OnValidSubmit="AgregarMetodoPago">
+                <DataAnnotationsValidator />
+                <div class="card shadow-lg border-0 rounded">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3><i class="bi bi-credit-card"></i> Método de Pago</h3>
+                    </div>
+                    <div class="card-body">
+                        @if (ventaSeleccionada is not null)
+                        {
+                            <div class="mb-3">
+                                <label for="VentaId" class="form-label">Venta ID:</label>
+                                <InputNumber @bind-Value="ventaSeleccionada.VentaId" class="form-control" Disabled="true" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Comprador" class="form-label">Comprador:</label>
+                                <InputText @bind-Value="ventaSeleccionada.Comprador" class="form-control" Disabled="true" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="MetodoPago" class="form-label">Método de Pago:</label>
+                                <InputSelect @bind-Value="metodoPagoSeleccionado" class="form-select">
+                                    <option value="" disabled selected>Seleccione un método</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => metodoPagoSeleccionado)" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="MontoPagado" class="form-label">Monto Pagado:</label>
+                                <InputNumber @bind-Value="montoPagado" class="form-control" />
+                                <ValidationMessage For="@(() => montoPagado)" />
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-center">Seleccione una venta para agregar el método de pago.</p>
+                        }
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="button" class="btn btn-success" disabled="@(!PuedeGuardar())">
+                            <i class="bi bi-check-circle-fill"></i> Guardar
+                        </button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Ventas> ListaVentas { get; set; } = new List<Ventas>();
+    public Ventas ventaSeleccionada { get; set; } = new Ventas();
+    public string metodoPagoSeleccionado { get; set; }
+    public decimal montoPagado { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaVentas = await ventaService.Listar(t => true);
+    }
+
+    public void SeleccionarVenta(Ventas venta)
+    {
+        ventaSeleccionada = venta;
+        metodoPagoSeleccionado = string.Empty;
+        montoPagado = 0;
+    }
+
+    public async Task AgregarMetodoPago()
+    {
+        notifications.Notify(new(ToastType.Success, "Se ha realizado el pago exitosamente"));
+        ResetFormulario();
+    }
+
+    public void ResetFormulario()
+    {
+        ventaSeleccionada = new Ventas();
+        metodoPagoSeleccionado = string.Empty;
+        montoPagado = 0;
+    }
+
+    public bool PuedeGuardar()
+    {
+        if(ventaSeleccionada.Total > montoPagado)
+        {
+            return false;
+        }
+        else
+        {
+            return ventaSeleccionada is not null && !string.IsNullOrWhiteSpace(metodoPagoSeleccionado) && montoPagado > 0;
+        }
+    }
+}

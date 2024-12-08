@@ -1,0 +1,148 @@
+﻿@page "/metodoPagoVentas"
+@inject CompraServices compraServices
+@inject ToastService notifications
+
+@rendermode InteractiveServer
+
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3><i class="bi bi-search"></i> Compras Realizadas</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Comprador</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ListaCompras.Any())
+                            {
+                                @foreach (var compra in ListaCompras)
+                                {
+                                    <tr>
+                                        <td>@compra.CompraId</td>
+                                        <td>@compra.Comprador</td>
+                                        <td>@compra.Total</td>
+                                        <td>
+                                            <button type="button" class="btn btn-success" @onclick="(() => SeleccionarCompra(compra))">
+                                                <i class="bi bi-wallet"></i> Agregar Pago
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay compras registradas.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6">
+            <EditForm Model="compraSeleccionada" OnValidSubmit="AgregarMetodoPago">
+                <DataAnnotationsValidator />
+                <div class="card shadow-lg border-0 rounded">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3><i class="bi bi-credit-card"></i> Método de Pago</h3>
+                    </div>
+                    <div class="card-body">
+                        @if (compraSeleccionada is not null)
+                        {
+                            <div class="mb-3">
+                                <label for="CompraId" class="form-label">Compra ID:</label>
+                                <InputNumber @bind-Value="compraSeleccionada.CompraId" class="form-control" Disabled="true" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Comprador" class="form-label">Comprador:</label>
+                                <InputText @bind-Value="compraSeleccionada.Comprador" class="form-control" Disabled="true" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="MetodoPago" class="form-label">Método de Pago:</label>
+                                <InputSelect @bind-Value="metodoPagoSeleccionado" class="form-select">
+                                    <option value="" disabled selected>Seleccione un método</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => metodoPagoSeleccionado)" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="MontoPagado" class="form-label">Monto Pagado:</label>
+                                <InputNumber @bind-Value="montoPagado" class="form-control" />
+                                <ValidationMessage For="@(() => montoPagado)" />
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-center">Seleccione una compra para agregar el método de pago.</p>
+                        }
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="button" class="btn btn-success" disabled="@(!PuedeGuardar())">
+                            <i class="bi bi-check-circle-fill"></i> Guardar
+                        </button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Compras> ListaCompras { get; set; } = new List<Compras>();
+    public Compras compraSeleccionada { get; set; } = new Compras();
+    public string metodoPagoSeleccionado { get; set; }
+    public decimal montoPagado { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCompras = await compraServices.Listar(t => true);
+    }
+
+    public void SeleccionarCompra(Compras compra)
+    {
+        compraSeleccionada = compra;
+        metodoPagoSeleccionado = string.Empty;
+        montoPagado = 0;
+    }
+
+    public async Task AgregarMetodoPago()
+    {
+        notifications.Notify(new(ToastType.Success, "Se ha realizado el pago exitosamente"));
+        ResetFormulario();
+    }
+
+    public void ResetFormulario()
+    {
+        compraSeleccionada = new Compras();
+        metodoPagoSeleccionado = string.Empty;
+        montoPagado = 0;
+    }
+
+    public bool PuedeGuardar()
+    {
+        if(compraSeleccionada.Total > montoPagado)
+        {
+            return false;
+        }
+        else
+        {
+            return compraSeleccionada is not null && !string.IsNullOrWhiteSpace(metodoPagoSeleccionado) && montoPagado > 0;
+        }
+    }
+}

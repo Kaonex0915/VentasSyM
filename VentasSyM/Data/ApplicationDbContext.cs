@@ -12,6 +12,8 @@ namespace VentasSyM.Data
         public DbSet<Categorias> Categorias { get; set; }
         public DbSet<ComprasDetalle> ComprasDetalle { get; set; }
         public DbSet<VentasDetalle> VentasDetalles { get; set; }
+        public DbSet<Devoluciones> Devoluciones { get; set; }
+        public DbSet<DevolucionDetalle> DevolucionDetalles { get; set; }
 
         /* protected override void OnModelCreating(ModelBuilder modelBuilder)
          {
