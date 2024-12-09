@@ -130,8 +130,6 @@
     </div>
 </EditForm>
 
-
-
 @code {
     [Parameter]
     public int VentaId { get; set; }
@@ -152,7 +150,7 @@
         ventas2 = await ventaService.BuscarVentaDetalleN(VentaId);
         Lista_Productos = await devolucionService.GetProductos();
         Lista_CompraDetalle = await compraService.ListarComprasDetalle(VentaId);
-
+        Lista_VentaDetalle = await ventaService.ListarVentasDetalle(VentaId);
         await CargarDatos();
     }
     public void Nuevo()
@@ -166,7 +164,7 @@
         devolucion.Comprador = ventas.Comprador;
         devolucion.Vendedor = ventas.Vendedor;
         devolucion.Fecha = DateTime.Now;
-        //devolucion = ventas;
+        
     }
 
     public async Task Guardar()

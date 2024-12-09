@@ -14,6 +14,7 @@ namespace VentasSyM.Data
         public DbSet<VentasDetalle> VentasDetalles { get; set; }
         public DbSet<Devoluciones> Devoluciones { get; set; }
         public DbSet<DevolucionDetalle> DevolucionDetalles { get; set; }
+        public DbSet<Ofertas> Ofertas { get; set; }
 
         /* protected override void OnModelCreating(ModelBuilder modelBuilder)
          {
