@@ -11,7 +11,7 @@
 
 <PageTitle>Confirm email change</PageTitle>
 
-<h1>Confirm email change</h1>
+<h1>Confirmacion de cambios en el correo electronico</h1>
 
 <StatusMessage Message="@message" />
 
@@ -35,13 +35,13 @@
         if (UserId is null || Email is null || Code is null)
         {
             RedirectManager.RedirectToWithStatus(
-                "Account/Login", "Error: Invalid email change confirmation link.", HttpContext);
+                "Account/Login", "Error: Link de cambio de correo electronico invalido.", HttpContext);
         }
 
         var user = await UserManager.FindByIdAsync(UserId);
         if (user is null)
         {
-            message = "Unable to find user with Id '{userId}'";
+            message = "Imposible encontrar al usuario con el siguiente Id: '{userId}'";
             return;
         }
 
@@ -49,7 +49,7 @@
         var result = await UserManager.ChangeEmailAsync(user, Email, code);
         if (!result.Succeeded)
         {
-            message = "Error changing email.";
+            message = "Error cambiando la direccion de correo electronico.";
             return;
         }
 
@@ -58,11 +58,11 @@
         var setUserNameResult = await UserManager.SetUserNameAsync(user, Email);
         if (!setUserNameResult.Succeeded)
         {
-            message = "Error changing user name.";
+            message = "Error cambiando el nombre del usuario.";
             return;
         }
 
         await SignInManager.RefreshSignInAsync(user);
-        message = "Thank you for confirming your email change.";
+        message = "Gracias por confirmar tu cambio de correo electronico.";
     }
 }

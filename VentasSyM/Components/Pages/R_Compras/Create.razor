@@ -80,7 +80,7 @@
                     <table class="table table-bordered table-light m-1">
                         <thead class="thead">
                             <tr class="table">
-                                <th>Producto Id</th>
+                                <th>Nombre del producto</th>
                                 <th>Cantidad</th>
                                 <th>Precio</th>
                             </tr>
@@ -90,7 +90,7 @@
                             @foreach (var trabajoDetalles in Lista_CompraDetalle)
                             {
                                 <tr>
-                                    <td>@trabajoDetalles.ProductoId</td>
+                                    <td>@ObtenerNombre(trabajoDetalles.ProductoId)</td>
                                     <td>@trabajoDetalles.UnidadUtilizada</td>
                                     <td>@trabajoDetalles.Precio</td>
                                     <td><button @onclick="@(() => RemoverDetalle(trabajoDetalles))" class="btn btn-outline-danger" type="button"><i class="bi bi-trash">Eliminar</i></button></td>
@@ -183,4 +183,8 @@
         notifications.Notify(new(ToastType.Danger,"Notificacion de prueba "));
     }
 
+    public string ObtenerNombre(int Id)
+    {
+        return Lista_Productos.Where(p => p.ProductoId == Id).FirstOrDefault().Nombre;
+    }
 }
