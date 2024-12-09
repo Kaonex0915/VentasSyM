@@ -24,9 +24,9 @@ Nuestro programa posee una interfaz super intuitiva y basta con 10 minutos de as
 final pueda utilizar el programa como es debido.
 
 Ahora tendremos una breve explicacion de los modulos:
-Compras: Un modulo diseñado para registrar las compras que hace la empresa a vendedores particulares o empresas.
+Compras: Un modulo diseñado para registrar las compras que hace la empresa a vendedores particulares o empresas para agregar productos al stock presente.
 
-Ventas: Este modulo esta hecho para registrar las ventas que hace la empresa a cualquier destinatario.
+Ventas: Este modulo esta hecho para registrar las ventas que hace la empresa a clientes o empresas.
 
 Metodo de pago: Como su nombre lo indica, este apartado es para cuando se realice el pago, especificar que se utilizara, tipo Transferencia, Tarjeta, Efectivo.. (Este apartado sirve esencialmente para anotar los datos del
 pago y recibirlo fisicamente o revisar cuentas en caso de que sea tarjeta o transferencia)
