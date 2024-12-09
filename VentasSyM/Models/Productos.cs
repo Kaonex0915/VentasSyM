@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VentasSyM.Models;
 
@@ -15,9 +16,12 @@ public class Productos
     
     [Required]
     public DateTime FechaVencimiento { get; set; }
-    
+
     [Required]
     public int CategoriaId { get; set; }
+
+    [ForeignKey("CategoriaId")]
+    public Categorias? Categoria { get; set; } 
 
     [Required]
     public decimal Costo { get; set; }

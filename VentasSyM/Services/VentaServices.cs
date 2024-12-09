@@ -190,7 +190,7 @@ public class VentaServices(IDbContextFactory<ApplicationDbContext> DbFactory)
     {
         await using var _context = await DbFactory.CreateDbContextAsync();
         return await _context.VentasDetalles
-            .Include(p => p.ProductoId)
+            .Include(p => p.Productos)
             .Where(v => v.VentaId == VentaId)
              .AsNoTracking()
             .ToListAsync();

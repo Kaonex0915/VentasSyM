@@ -67,6 +67,7 @@ public class ProductoServices (IDbContextFactory<ApplicationDbContext> DbFactory
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.Productos
+            .Include(p => p.Categoria) 
             .Where(criterio)
             .AsNoTracking()
             .ToListAsync();

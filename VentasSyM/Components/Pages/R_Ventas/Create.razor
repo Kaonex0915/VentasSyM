@@ -62,12 +62,6 @@
                                 <InputNumber @bind-Value="ventasDetalle.UnidadUtilizada" class="form-control"></InputNumber>
                             </div>
                         </div>
-                        <div class="col-3">
-                            <label>Precio: </label>
-                            <div class="input-group mb-3">
-                                <InputNumber @bind-Value="ventasDetalle.Precio" class="form-control"></InputNumber>
-                            </div>
-                        </div>
 
                         <div class="col">
                             <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary"><i class="bi bi-plus">Agregar</i></button>
@@ -108,7 +102,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-                <a type="button" href="/Index" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+                <a type="button" href="/Index/Ventas/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
     </div>
@@ -136,6 +130,7 @@
 
     public async Task Guardar()
     {
+       
         ventas.VentasDetalles = Lista_VentaDetalle;
         var guardo = await ventaService.Guardar(ventas);
         if (guardo)
@@ -161,17 +156,18 @@
                 };
 
 
-
+            ventas.Total += ventasDetalle.Precio * ventasDetalle.UnidadUtilizada; 
             Lista_VentaDetalle.Add(detalleNuevo);
             ventasDetalle = new VentasDetalle();
             productoSeleccionado = 0;
         }
+
     }
 
     public void RemoverDetalle(VentasDetalle detalleRemover)
     {
         Lista_VentaDetalle.Remove(detalleRemover);
-
+        ventas.Total -= ventasDetalle.Precio * ventasDetalle.UnidadUtilizada;
         productoSeleccionado = detalleRemover.ProductoId;
         ventasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
         ventasDetalle.Precio = detalleRemover.Precio;

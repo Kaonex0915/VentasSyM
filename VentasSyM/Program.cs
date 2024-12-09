@@ -38,6 +38,7 @@ builder.Services.AddScoped<VentaServices>();
 builder.Services.AddScoped<OfertaServices>();
 builder.Services.AddScoped<DevolucionesServices>();
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();

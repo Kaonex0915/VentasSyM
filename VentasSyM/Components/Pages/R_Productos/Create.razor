@@ -118,6 +118,7 @@
 
     public async Task Guardar()
     {
+        productos.CategoriaId = CategoriaSeleccionada; 
         var guardo = await productoService.Guardar(this.productos);
         Nuevo();
     }

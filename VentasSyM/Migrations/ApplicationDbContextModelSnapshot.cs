@@ -414,6 +414,8 @@ namespace VentasSyM.Migrations
 
                     b.HasKey("ProductoId");
 
+                    b.HasIndex("CategoriaId");
+
                     b.ToTable("Productos");
                 });
 
@@ -554,6 +556,17 @@ namespace VentasSyM.Migrations
                         .HasForeignKey("DevolucionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("VentasSyM.Models.Productos", b =>
+                {
+                    b.HasOne("VentasSyM.Models.Categorias", "Categoria")
+                        .WithMany()
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
                 });
 
             modelBuilder.Entity("VentasSyM.Models.VentasDetalle", b =>

@@ -1,5 +1,5 @@
 ﻿@page "/Delete/Ventas/"
-@page "/Delete/Ventas/{CompraId:int}"
+@page "/Delete/Ventas/{VentaId:int}"
 @inject VentaServices ventaService
 @inject NavigationManager navigationManager
 
@@ -93,6 +93,6 @@ else
 
     public void Volver()
     {
-        navigationManager.NavigateTo("/Index");
+        navigationManager.NavigateTo("/Index/Ventas/");
     }
 }

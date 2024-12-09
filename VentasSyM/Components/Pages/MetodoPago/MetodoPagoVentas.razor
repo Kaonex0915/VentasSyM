@@ -142,7 +142,7 @@
         }
         else
         {
-            return ventaSeleccionada is not null && !string.IsNullOrWhiteSpace(metodoPagoSeleccionado) && montoPagado > 0;
+            return ventaSeleccionada is not null && !string.IsNullOrWhiteSpace(metodoPagoSeleccionado) && montoPagado >= 0;
         }
     }
 }

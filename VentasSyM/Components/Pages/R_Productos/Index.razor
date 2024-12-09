@@ -3,6 +3,8 @@
 @inject NavigationManager navigationManager
 @inject ProductoServices productoService
 
+@* @attribute [Authorize(Roles = "Admin")] *@
+
 <EditForm Model="ListaProductos" class="p-3 rounded">
 
     <div class="card-header bg-light text-center py-2">
@@ -60,7 +62,7 @@
                     <td>@producto.ProductoId</td>
                     <td>@producto.Nombre</td>
                     <td>@producto.Descripcion</td>
-                    <td>@producto.CategoriaId</td>
+                    <td>@producto.Categoria?.Nombre</td> 
                     <td>@producto.Costo</td>
                     <td>@producto.Precio</td>
                     <td>@producto.Existencia</td>
