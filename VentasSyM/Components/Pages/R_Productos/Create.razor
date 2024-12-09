@@ -4,6 +4,8 @@
 @inject CategoriaServices categoriaService
 @rendermode InteractiveServer
 
+@attribute [Authorize(Roles = "Admin")]
+
 
 <EditForm Model="productos" OnValidSubmit="Guardar" FormName="ProductoForm">
     <DataAnnotationsValidator />

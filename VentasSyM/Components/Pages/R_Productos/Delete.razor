@@ -4,6 +4,8 @@
 @inject ProductoServices productoService
 @rendermode InteractiveServer
 
+@attribute [Authorize(Roles = "Admin")]
+
 
 <PageTitle>Eliminar Producto</PageTitle>
 

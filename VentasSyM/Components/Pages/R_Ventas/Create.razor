@@ -1,8 +1,9 @@
 ﻿@page "/Create/Ventas/"
 @inject VentaServices ventaService
 @inject ToastService notifications
-
 @rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Admin")]
 
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 
@@ -46,7 +47,7 @@
                         <div class="col-3">
                             <label>Productos</label>
                             <div class="input-group mb-3">
-                                <InputSelect class="form-select" @bind-Value="productoSeleccionado">
+                                <InputSelect class="form-select" @bind-Value="productoSeleccionado" @oninput="OnProductoSeleccionado">
                                     <option value="0" disabled selected>Seleccione un producto</option>
                                     @foreach (var producto in Lista_Productos)
                                     {
@@ -63,6 +64,13 @@
                             </div>
                         </div>
 
+                        <div class="col-3">
+                            <label>Precio</label>
+                            <div class="input-group mb-3">
+                                <InputNumber @bind-Value="ventasDetalle.Precio" class="form-control" readonly></InputNumber>
+                            </div>
+                        </div>
+
                         <div class="col">
                             <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary"><i class="bi bi-plus">Agregar</i></button>
                         </div>
@@ -74,7 +82,7 @@
                     <table class="table table-bordered table-light m-1">
                         <thead class="thead">
                             <tr class="table">
-                                <th>Producto Id</th>
+                                <th>Nombre del producto</th>
                                 <th>Cantidad</th>
                                 <th>Precio</th>
                             </tr>
@@ -84,7 +92,7 @@
                             @foreach (var trabajoDetalles in Lista_VentaDetalle)
                             {
                                 <tr>
-                                    <td>@trabajoDetalles.ProductoId</td>
+                                    <td>@ObtenerNombre(trabajoDetalles.ProductoId)</td>
                                     <td>@trabajoDetalles.UnidadUtilizada</td>
                                     <td>@trabajoDetalles.Precio</td>
                                     <td><button @onclick="@(() => RemoverDetalle(trabajoDetalles))" class="btn btn-outline-danger" type="button"><i class="bi bi-trash">Eliminar</i></button></td>
@@ -93,6 +101,7 @@
                         </tbody>
 
                     </table>
+                    <h5>Total: RD$ @Lista_VentaDetalle.Sum(d => d.Precio * d.UnidadUtilizada)</h5>
 
                 </div>
             </fieldset>
@@ -172,6 +181,21 @@
         ventasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
         ventasDetalle.Precio = detalleRemover.Precio;
 
+    }
+
+    public string ObtenerNombre(int Id)
+    {
+        return Lista_Productos.Where(p => p.ProductoId == Id).FirstOrDefault().Nombre;
+    }
+
+    private void OnProductoSeleccionado(ChangeEventArgs e)
+    {
+        var productoId = Convert.ToInt32(e.Value);
+        var producto = Lista_Productos.FirstOrDefault(p => p.ProductoId == productoId);
+        if (producto != null)
+        {
+            ventasDetalle.Precio = producto.Precio;
+        }
     }
 
 }

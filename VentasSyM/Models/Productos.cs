@@ -13,9 +13,9 @@ public class Productos
 
     [Required]
     public string Descripcion { get; set; }
-    
+
     [Required]
-    public DateTime FechaVencimiento { get; set; }
+    public DateTime FechaVencimiento { get; set; } = DateTime.Now;
 
     [Required]
     public int CategoriaId { get; set; }

@@ -1,6 +1,8 @@
 ﻿@page "/Create/Categorias/"
 @page "/Create/Categorias/{CategoriaId:int}"
 @inject CategoriaServices categoriaService
+
+@attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveServer
 
 

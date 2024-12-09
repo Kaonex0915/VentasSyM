@@ -1,8 +1,9 @@
 ﻿@page "/metodoPagoVentas"
 @inject VentaServices ventaService
 @inject ToastService notifications
-
 @rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Admin")]
 
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 

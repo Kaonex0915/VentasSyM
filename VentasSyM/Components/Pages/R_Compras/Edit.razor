@@ -1,5 +1,9 @@
 ﻿@page "/Edit/Compras/{CompraId:int}"
 @inject CompraServices compraService
+@inject ToastService notifications
+
+@attribute [Authorize(Roles = "Admin")]
+
 @rendermode InteractiveServer
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 
@@ -52,31 +56,21 @@
                                 </InputSelect>
                             </div>
                         </div>
-
-                        <div class="col-3">
-                            <label>Cantidad</label>
-                            <div class="input-group mb-3">
-                                <InputNumber @bind-Value="compraDetalle.UnidadUtilizada" class="form-control"></InputNumber>
-                            </div>
-                        </div>
-                        <div class="row">
+                        
                             <div class="col-3">
-                                <label>Precio: </label>
+                                <label>Cantidad</label>
+                                <div class="input-group mb-3">
+                                    <InputNumber @bind-Value="compraDetalle.UnidadUtilizada" class="form-control"></InputNumber>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <label>Costo: </label>
                                 <div class="input-group mb-3">
                                     <InputNumber @bind-Value="compraDetalle.Precio" class="form-control"></InputNumber>
                                 </div>
                             </div>
-
-                           @* <div class="col">
-                                <InputCheckbox class="form-check-input" type="checkbox" id="checkboxNoLabel" @bind-Value="compras.Vendido" aria-label="..."></InputCheckbox>
-                                <label class="form-check-label" for="compraVendida">
-                                    Compra Vendida
-                                </label>
-                                <ValidationMessage For="@(() => compra.Vendido)" />
-                            </div>*@
-
-                        </div>
-
+                      
                         <div class="col">
                             <button type="button" @onclick="AgregarDetalle" class="btn btn-outline-primary"><i class="bi bi-plus">Agregar</i></button>
                         </div>
@@ -98,15 +92,17 @@
                             @foreach (var trabajoDetalles in Lista_CompraDetalle)
                             {
                                 <tr>
-                                    <td>@trabajoDetalles.ProductoId</td>
+                                    <td>@ObtenerNombre(trabajoDetalles.ProductoId)</td>
                                     <td>@trabajoDetalles.UnidadUtilizada</td>
-                                    <td>@trabajoDetalles.Precio</td>
+                                    <td>@ObtenerCosto(trabajoDetalles.ProductoId)</td>
                                     <td><button @onclick="@(() => RemoverDetalle(trabajoDetalles))" class="btn btn-outline-danger" type="button"><i class="oi oi-trash">Eliminar</i></button></td>
                                 </tr>
                             }
                         </tbody>
 
                     </table>
+
+                    <h5>Total: RD$ @TotalCompra</h5>
 
                 </div>
             </fieldset>
@@ -132,6 +128,7 @@
     public ComprasDetalle compraDetalle { get; set; } = new ComprasDetalle();
     public List<ComprasDetalle> Lista_CompraDetalle { get; set; } = new List<ComprasDetalle>();
     public List<Productos> Lista_Productos { get; set; } = new List<Productos>();
+    public decimal TotalCompra = 0;
 
 
     protected override async Task OnInitializedAsync()
@@ -181,26 +178,36 @@
         Nuevo();
     }
 
-
-    public void AgregarDetalle()
+    public async Task AgregarDetalle()
     {
+        var producto = await compraService.BuscarProductos(productoSeleccionado);
         var seleccionProducto = Lista_Productos
         .FirstOrDefault(p => p.ProductoId == productoSeleccionado);
 
         if (seleccionProducto != null && compraDetalle.UnidadUtilizada > 0)
         {
             compraDetalle.Precio = seleccionProducto.Precio;
+            if (Lista_CompraDetalle.Any(d => d.ProductoId == productoSeleccionado))
+            {
+                notifications.Notify(new(ToastType.Info, "El producto ya fue agregado."));
+                return;
+            }
 
-            var detalleNuevo = new ComprasDetalle
-                {
-                    ProductoId = seleccionProducto.ProductoId,
-                    UnidadUtilizada = compraDetalle.UnidadUtilizada,
-                    Precio = seleccionProducto.Precio
-                };
+            if (producto != null)
+            {
+                var detalleNuevo = new ComprasDetalle
+                    {
+                        ProductoId = seleccionProducto.ProductoId,
+                        UnidadUtilizada = compraDetalle.UnidadUtilizada,
+                        Precio = seleccionProducto.Precio
+                    };
 
+                Lista_CompraDetalle.Add(detalleNuevo);
 
+            }
 
-            Lista_CompraDetalle.Add(detalleNuevo);
+            compras.Total = producto.Costo * compraDetalle.UnidadUtilizada;
+            TotalCompra = compraDetalle.UnidadUtilizada * producto.Costo;
             compraDetalle = new ComprasDetalle();
             productoSeleccionado = 0;
         }
@@ -218,4 +225,13 @@
         compraDetalle.Precio = detalleRemover.Precio;
     }
 
+    public string ObtenerNombre(int Id)
+    {
+        return Lista_Productos.Where(p => p.ProductoId == Id).FirstOrDefault().Nombre;
+    }
+
+    public decimal ObtenerCosto(int Id)
+    {
+        return Lista_Productos.Where(p => p.ProductoId == Id).FirstOrDefault().Costo;
+    }
 }

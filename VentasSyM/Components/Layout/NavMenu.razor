@@ -18,20 +18,22 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Index/Compras/">
-                <span class="bi bi-bag-check" aria-hidden="true"></span>Compras
-            </NavLink>
-        </div>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Index/Ventas/">
-                <span class="bi bi-bag-check-fill" aria-hidden="true"></span> Ventas
-            </NavLink>
-        </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Index/Compras/">
+                        <span class="bi bi-bag-check" aria-hidden="true"></span>Compras
+                    </NavLink>
+                </div>
 
-        @*<AuthorizeView Roles="Admin">
-        <Authorized>*@
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Index/Ventas/">
+                        <span class="bi bi-bag-check-fill" aria-hidden="true"></span> Ventas
+                    </NavLink>
+                </div>
+
+
 
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/Index/Productos/">
@@ -52,18 +54,17 @@
                         <span class="bi bi-fire" aria-hidden="true"></span> Ofertas
                     </NavLink>
                 </div>
-            @*
-            </Authorized>
-        </AuthorizeView> *@
+            
+
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="auth">
                 <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Autentificacion
             </NavLink>
         </div>
+  
 
-        <AuthorizeView>
-            <Authorized>
+       
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Manage">
                         <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
@@ -78,8 +79,10 @@
                         </button>
                     </form>
                 </div>
+
             </Authorized>
-            <NotAuthorized>
+        </AuthorizeView>
+  
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Register">
                         <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Registrar usuario
@@ -90,8 +93,7 @@
                         <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Inicio de Sesi&oacute;n
                     </NavLink>
                 </div>
-            </NotAuthorized>
-        </AuthorizeView>
+
     </nav>
 </div>
 

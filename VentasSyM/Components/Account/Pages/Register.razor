@@ -121,7 +121,7 @@
     private sealed class InputModel
     {
         [Required (ErrorMessage = "El correo ingresado no es una direccion de correo valida")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "El correo ingresado no es una direccion de correo valida")]
         [Display(Name = "Email")]
         public string Email { get; set; } = "";
 
@@ -133,7 +133,7 @@
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "La contraseña introducinda no es igual a la confirmacion.")]
+        [Compare("Password", ErrorMessage = "La contraseña introducida no es igual a la confirmacion.")]
         public string ConfirmPassword { get; set; } = "";
     }
 }

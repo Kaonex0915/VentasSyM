@@ -2,6 +2,8 @@
 @page "/Details/Compras/{CompraId:int}"
 @inject CompraServices compraService
 
+@attribute [Authorize(Roles = "Admin")]
+
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />

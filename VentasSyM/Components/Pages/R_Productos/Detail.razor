@@ -1,8 +1,9 @@
 ﻿@page "/Detail/Productos/"
 @page "/Detail/Productos/{ProductoId:int}"
 @inject ProductoServices productoService
-
 @inject NavigationManager navigationManager
+
+@attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveServer
 
 <PageTitle>Detalles del combo</PageTitle>

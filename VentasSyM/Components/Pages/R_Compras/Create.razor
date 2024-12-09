@@ -2,6 +2,8 @@
 @inject CompraServices compraService
 @inject ToastService notifications
 
+@attribute [Authorize(Roles = "Admin")]
+
 @rendermode InteractiveServer
 
 <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
@@ -46,7 +48,7 @@
                         <div class="col-3">
                             <label>Productos</label>
                             <div class="input-group mb-3">
-                                <InputSelect class="form-select" @bind-Value="productoSeleccionado">
+                                <InputSelect class="form-select" @bind-Value="productoSeleccionado" @oninput="OnProductoSeleccionado">
                                     <option value="0" disabled selected>Seleccione un producto</option>
                                     @foreach (var producto in Lista_Productos)
                                     {
@@ -65,7 +67,7 @@
                         <div class="col-3">
                             <label>Precio: </label>
                             <div class="input-group mb-3">
-                                <InputNumber @bind-Value="comprasDetalle.Precio" class="form-control"></InputNumber>
+                                <InputNumber @bind-Value="comprasDetalle.Precio" class="form-control" readonly></InputNumber>
                             </div>
                         </div>
 
@@ -82,7 +84,7 @@
                             <tr class="table">
                                 <th>Nombre del producto</th>
                                 <th>Cantidad</th>
-                                <th>Precio</th>
+                                <th>Costo</th>
                             </tr>
                         </thead>
 
@@ -92,13 +94,14 @@
                                 <tr>
                                     <td>@ObtenerNombre(trabajoDetalles.ProductoId)</td>
                                     <td>@trabajoDetalles.UnidadUtilizada</td>
-                                    <td>@trabajoDetalles.Precio</td>
+                                    <td>@ObtenerCosto(trabajoDetalles.ProductoId)</td>
                                     <td><button @onclick="@(() => RemoverDetalle(trabajoDetalles))" class="btn btn-outline-danger" type="button"><i class="bi bi-trash">Eliminar</i></button></td>
                                 </tr>
                             }
                         </tbody>
 
                     </table>
+                    <h5>Total: RD$ @TotalCompra</h5>
 
                 </div>
             </fieldset>
@@ -122,6 +125,7 @@
     public ComprasDetalle comprasDetalle { get; set; } = new ComprasDetalle();
     public List<ComprasDetalle> Lista_CompraDetalle { get; set; } = new List<ComprasDetalle>();
     public List<Productos> Lista_Productos { get; set; } = new List<Productos>();
+    public decimal TotalCompra = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,25 +148,36 @@
         }
     }
 
-    public void AgregarDetalle()
+    public async Task AgregarDetalle()
     {
+        var producto = await compraService.BuscarProductos(productoSeleccionado);
         var seleccionProducto = Lista_Productos
         .FirstOrDefault(p => p.ProductoId == productoSeleccionado);
 
         if (seleccionProducto != null && comprasDetalle.UnidadUtilizada > 0)
         {
             comprasDetalle.Precio = seleccionProducto.Precio;
+            if (Lista_CompraDetalle.Any(d => d.ProductoId == productoSeleccionado))
+            {
+                notifications.Notify(new(ToastType.Info, "El producto ya fue agregado."));
+                return;
+            }
 
-            var detalleNuevo = new ComprasDetalle
-                {
-                    ProductoId = seleccionProducto.ProductoId,
-                    UnidadUtilizada = comprasDetalle.UnidadUtilizada,
-                    Precio = seleccionProducto.Precio
-                };
+            if (producto != null)
+            {
+                var detalleNuevo = new ComprasDetalle
+                    {
+                        ProductoId = seleccionProducto.ProductoId,
+                        UnidadUtilizada = comprasDetalle.UnidadUtilizada,
+                        Precio = seleccionProducto.Precio
+                    };
 
+                Lista_CompraDetalle.Add(detalleNuevo);
 
+            }
 
-            Lista_CompraDetalle.Add(detalleNuevo);
+            compras.Total = producto.Costo * comprasDetalle.UnidadUtilizada;
+            TotalCompra = comprasDetalle.UnidadUtilizada * producto.Costo;
             comprasDetalle = new ComprasDetalle();
             productoSeleccionado = 0;
         }
@@ -171,7 +186,7 @@
     public void RemoverDetalle(ComprasDetalle detalleRemover)
     {
         Lista_CompraDetalle.Remove(detalleRemover);
-
+        compras.Total -= comprasDetalle.Precio * comprasDetalle.UnidadUtilizada;
         productoSeleccionado = detalleRemover.ProductoId;
         comprasDetalle.UnidadUtilizada = detalleRemover.UnidadUtilizada;
         comprasDetalle.Precio = detalleRemover.Precio;
@@ -187,4 +202,21 @@
     {
         return Lista_Productos.Where(p => p.ProductoId == Id).FirstOrDefault().Nombre;
     }
+
+    public decimal ObtenerCosto(int Id)
+    {
+        return Lista_Productos.Where(p => p.ProductoId == Id).FirstOrDefault().Costo;
+    }
+
+    private void OnProductoSeleccionado(ChangeEventArgs e)
+    {
+        var productoId = Convert.ToInt32(e.Value);
+        var producto = Lista_Productos.FirstOrDefault(p => p.ProductoId == productoId);
+        if (producto != null)
+        {
+            comprasDetalle.Precio = producto.Costo; 
+        }
+    }
+
+
 }

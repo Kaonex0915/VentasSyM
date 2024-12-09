@@ -3,6 +3,8 @@
 @inject NavigationManager navigationManager
 @inject CategoriaServices categoriaService
 
+@attribute [Authorize(Roles = "Admin")]
+
 <EditForm Model="ListaCategorias" class="p-3 rounded">
 
     <div class="card-header bg-light text-center py-2">

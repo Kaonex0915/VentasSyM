@@ -2,6 +2,8 @@
 @page "/Delete/Categorias/{CategoriaId:int}"
 @inject NavigationManager navigationManager
 @inject CategoriaServices categoriaService
+
+@attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveServer
 
 

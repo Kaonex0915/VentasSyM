@@ -4,6 +4,9 @@
 @inject NavigationManager navigationManager
 @inject ProductoServices productoService
 
+@attribute [Authorize(Roles = "Admin")]
+
+
 <EditForm Model="productos" OnValidSubmit="Guardar" FormName="ProductoForm">
     <DataAnnotationsValidator />
     <div class="card">
