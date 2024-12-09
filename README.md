@@ -40,6 +40,30 @@ Ofertas: Simplemente aqui podremos observar las ofertas de productos que existen
 Devoluciones: Para el caso de las devoluciones, aqui podemos realizarlas de manera sencilla.
 
 
+Para ingresar como Administrador, utilice el siguiente usuario:
+
+Usuario:
+
+Admin@gmail.com
+
+Contraseña:
+
+M123m@
+
+
+
+
+Para el usuario normal, utilice el siguiente usuario:
+
+Usuario:
+
+Usuario@gmail.com
+
+
+Contraseña:
+
+U123u@
+
 
 Para mas informaciones, contactenos a nuestros correos electronicos:
 
@@ -48,7 +72,6 @@ Sebas.suarez177@gmail.com
 durandelacruzm1@gmail.com
 
 
-Ing. Duran de la Cruz
-
 Ing. Suarez Brito
 
+Ing. Duran de la Cruz
