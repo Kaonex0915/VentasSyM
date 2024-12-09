@@ -1,5 +1,112 @@
-﻿<h3>CrearOferta</h3>
+﻿@page "/OfertasPage/"
+@inject OfertaServices ofertasService
+@inject ToastService notifications
+@inject ProductoServices productoServices
+@rendermode InteractiveServer
+
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
+
+<EditForm Model="ofertas" OnValidSubmit="AgregarOferta" FormName="OfertaForm">
+    <DataAnnotationsValidator />
+    <div class="card">
+
+        <div class="card-header">
+            <h1>Agregar Nueva Oferta</h1>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="OfertaId" class="form-label">OfertaId:</label>
+                    <div class="input-group">
+                        <div class=" sizeid">
+                            <InputNumber @bind-Value="ofertas.OfertaId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>Fecha limite de la oferta:</label>
+                    <InputDate @bind-Value="ofertas.FechaFin" class="form-control"></InputDate>
+                    <ValidationMessage For="@(() => ofertas.FechaFin)" />
+                </div>
+
+            </div>
+
+            <div class="col-3">
+                <label>Productos</label>
+                <div class="input-group mb-3">
+                    <InputSelect class="form-select" @bind-Value="ofertas.ProductoId">
+                        <option value="0" disabled selected>Seleccione un producto</option>
+                        @foreach (var producto in Lista_Productos)
+                        {
+                            <option value="@producto.ProductoId">@producto.Nombre</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+            
+                <div class="col-md-3">
+                    <label>Descuento:</label>
+                    <InputNumber @bind-Value="ofertas.Descuento" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => ofertas.Descuento)" />
+                </div>          
+                
+        </div>
+
+        <div class="card-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+            <button type="submit" class="btn btn-outline-success">Guardar <i class="bi bi-floppy mt-3" /></button>
+            <a class="btn btn-outline-primary" href="/Index/Productos/">
+                <span class="bi bi-arrow-left mt-3"></span> Retroceder
+            </a>
+        </div>
+    </div>
+</EditForm>
 
 @code {
+    public Ofertas ofertas = new Ofertas();
+    public List<Ofertas> ListaOfertas = new List<Ofertas>();
+    public List<Productos> Lista_Productos = new List<Productos>(); 
 
+    protected override async Task OnInitializedAsync()
+    {
+        Lista_Productos = await productoServices.Listar(p => true);
+        await CargarOfertas();
+    }
+
+    public void Nuevo()
+    {
+        ofertas = new Ofertas();
+    }
+
+    public async Task CargarOfertas()
+    {
+        ListaOfertas = await ofertasService.Listar(o => true);
+    }
+
+    public async Task AgregarOferta()
+    {
+        var resultado = await ofertasService.Guardar(ofertas);
+        if (resultado)
+        {
+            ofertas = new Ofertas();
+            await CargarOfertas();
+        }
+    }
+
+    public async Task EliminarOferta(int ofertaId)
+    {
+        var resultado = await ofertasService.Eliminar(ofertaId);
+        if (resultado)
+        {
+            await CargarOfertas();
+        }
+    }
+
+    public void EliminarExpiradas()
+    {
+        ofertasService.EliminarOfertasExpiradas();
+        CargarOfertas();
+    }
 }

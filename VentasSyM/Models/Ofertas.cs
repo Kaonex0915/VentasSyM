@@ -8,5 +8,5 @@ public class Ofertas
     public int OfertaId { get; set; }
     public int ProductoId { get; set; }
     public decimal? Descuento { get; set; }
-    public DateTime FechaFin {  get; set; }
+    public DateTime FechaFin { get; set; } = DateTime.Now;
 }
